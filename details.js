@@ -1,11 +1,23 @@
+const apiKey = "d5d8a211dbbd4ef5849cc74165a5be01";
+let testUrl = "https://api.football-data.org/v4/competitions/PD/standings";
+function test(url) {
+  fetch(url, {
+    headers: {
+      "X-Auth-Token": apiKey,
+    },
+  })
+    .then((response) => response.json())
+    .then((result) => {
+      console.log(result);
+    });
+}
+test(testUrl);
+
 const params = new URLSearchParams(window.location.search);
 const queryString = window.location.search;
-console.log(queryString);
 const urlParams = new URLSearchParams(queryString);
-console.log(urlParams);
 const league = urlParams.get("league");
 const id = urlParams.get("id");
-console.log(league);
 
 document.querySelector("#h1Home").innerHTML = league;
 
@@ -26,6 +38,7 @@ let chartTitle = "";
 let chart;
 
 let tableDiv = document.querySelector("#tableDiv");
+const headerHomePage = document.querySelector("#headerHomePage");
 const ctx = document.querySelector("#myChart");
 const canvasDiv = document.querySelector("#canvasDiv");
 let showAmountWins = document.querySelector("#amountOfWins");
@@ -38,6 +51,28 @@ const canvas = document.createElement("canvas");
 const chartBtn = document.createElement("button");
 
 canvas.style.width = "700px";
+
+let valueFromLocalStorage = localStorage.getItem("favouriteTeamId");
+console.log(localStorage.getItem("favouriteTeamId"));
+
+fetch((urlTeams += `/${valueFromLocalStorage}`), {
+  headers: {
+    "X-Auth-Token": apiKey,
+  },
+})
+  .then((response) => response.json())
+  .then((result) => {
+    console.log(result);
+
+    let favTeamLogo = document.createElement("img");
+    favTeamLogo.setAttribute("src", result.crest);
+
+    let favTeamName = document.createElement("h2");
+    favTeamName.textContent = `Jag hejar på ${result.shortName}!`;
+
+    headerHomePage.appendChild(favTeamLogo);
+    headerHomePage.appendChild(favTeamName);
+  });
 
 function showTeamMembers() {
   urlTeams = backUpUrlTeams;
@@ -53,9 +88,27 @@ function showTeamMembers() {
       .then((response) => response.json())
       .then((result) => {
         console.log(result);
-        let h2 = document.createElement("h2");
-        h2.innerHTML = `${result.name}`;
-        tableDiv.appendChild(h2);
+        // Lagets flagga
+        let teamLogo = document.createElement("img");
+        teamLogo.setAttribute("src", result.crest);
+        tableDiv.appendChild(teamLogo);
+        // Knapp favoritlag
+        let favouriteBtn = document.createElement("button");
+        favouriteBtn.textContent = "Spara som mitt lag";
+        tableDiv.appendChild(favouriteBtn);
+
+        // Här lägger jag till en eventlistener som lyssnar efter klick på knappen.
+        // Om knappen trycks på sparas laget undan i local storage vilket gör att
+        // sidan minns till nästa gång vilket favoritlag användaren har.
+
+        favouriteBtn.addEventListener("click", () => {
+          console.log(result.name);
+          localStorage.setItem("favouriteTeamId", result.id);
+        });
+
+        let teamHeader = document.createElement("h2");
+        teamHeader.innerHTML = `${result.name}`;
+        tableDiv.appendChild(teamHeader);
         let coach = document.createElement("p");
         coach.innerHTML = `Coach: <strong>${result.coach.name}</strong>`;
         tableDiv.appendChild(coach);
