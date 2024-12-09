@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Serie A</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body id="bodyHomePage">
+    <header id="headerHomePage">
+      <h1 id="h1Home">Liga</h1>
+      <a href="index.html"><button>Hem</button></a>
+    </header>
+    <nav id="navHomePage">
+      <div id="divHome" style="background-color: aliceblue">
+        <p class="pStyle" id="showTable">Visa tabell</p>
+        <p class="pStyle" id="amountOfWins">Visa antal vinster</p>
+        <p class="pStyle" id="amountOfScores">Antal gjorda mål</p>
+      </div>
+    </nav>
+
+    <div id="tableDiv">
+      <!-- <p></p> -->
+    </div>
+
+    <div id="canvasDiv">
+      <canvas id="myChart" style="width: 700px"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="helpers.js"></script>
+    <script src="index.js"></script>
+    <script src="details.js"></script>
+  </body>
+</html>

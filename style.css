@@ -1,0 +1,88 @@
+body {
+  background-color: green;
+  color: black;
+}
+/* background-image: url("championsLeagueBackground.jpg");
+  background-size: contain;
+  background-position: top;
+  background-repeat: no-repeat;
+/*  */
+a {
+  text-decoration: none;
+  color: black;
+  cursor: pointer;
+}
+a:hover {
+  color: antiquewhite;
+}
+
+.hidden {
+  display: none;
+}
+
+.pStyle {
+  cursor: pointer;
+}
+#bodyHomePage {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas:
+    "header"
+    "nav";
+  align-items: center;
+  justify-items: center;
+
+  height: 97vh;
+  /* border: 1px solid black; */
+}
+#headerHomePage {
+  grid-area: header;
+  /* justify-content: center; */
+  /* align-items: center; */
+  padding: 5px;
+  /* border: 1px solid black; */
+  margin: 0;
+  width: 70vw;
+  /* margin-top: 150px; */
+}
+#navHomePage {
+  grid-area: nav;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  /* border: 1px solid black; */
+  width: 90vw;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+#h1Home {
+  font-size: 40px;
+  text-align: center;
+}
+#pHome {
+  text-align: center;
+  font-size: 25px;
+}
+.imgHome {
+  margin-right: 10px;
+  /* border: 1px solid black; */
+  justify-content: space-between;
+  padding: 5px;
+}
+.aHome {
+  /* border: 1px solid black; */
+  align-items: center;
+  margin: 20px;
+}
+#divHome {
+  display: flex;
+  flex-wrap: wrap;
+  width: 90vw;
+  justify-content: center;
+  align-items: center;
+  justify-content: space-around;
+
+  /* border: 1px solid black; */
+}
