@@ -55,24 +55,27 @@ canvas.style.width = "700px";
 let valueFromLocalStorage = localStorage.getItem("favouriteTeamId");
 console.log(localStorage.getItem("favouriteTeamId"));
 
-fetch((urlTeams += `/${valueFromLocalStorage}`), {
-  headers: {
-    "X-Auth-Token": apiKey,
-  },
-})
-  .then((response) => response.json())
-  .then((result) => {
-    console.log(result);
+function setFavTeam(id) {
+  fetch((urlTeams += `/${id}`), {
+    headers: {
+      "X-Auth-Token": apiKey,
+    },
+  })
+    .then((response) => response.json())
+    .then((result) => {
+      console.log(result);
 
-    let favTeamLogo = document.createElement("img");
-    favTeamLogo.setAttribute("src", result.crest);
+      let favTeamLogo = document.createElement("img");
+      favTeamLogo.setAttribute("src", result.crest);
 
-    let favTeamName = document.createElement("h2");
-    favTeamName.textContent = `Jag hejar på ${result.shortName}!`;
+      let favTeamName = document.createElement("h2");
+      favTeamName.textContent = `Jag hejar på ${result.shortName}!`;
 
-    headerHomePage.appendChild(favTeamLogo);
-    headerHomePage.appendChild(favTeamName);
-  });
+      headerHomePage.appendChild(favTeamLogo);
+      headerHomePage.appendChild(favTeamName);
+    });
+}
+setFavTeam(valueFromLocalStorage);
 
 function showTeamMembers() {
   urlTeams = backUpUrlTeams;

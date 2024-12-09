@@ -70,6 +70,7 @@ a:hover {
   /* border: 1px solid black; */
   justify-content: space-between;
   padding: 5px;
+  width: 150px;
 }
 .aHome {
   /* border: 1px solid black; */
@@ -83,6 +84,7 @@ a:hover {
   justify-content: center;
   align-items: center;
   justify-content: space-around;
+  /* background-color: aliceblue; */
 
   /* border: 1px solid black; */
 }
