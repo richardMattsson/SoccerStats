@@ -1,20 +1,3 @@
-console.log("hej");
-
-// premierLeagueLink.addEventListener("click", () => {
-//   console.log("hej");
-//   premierLeagueLink.setAttribute(
-//     "href",
-//     "details.html?league=Premier League&id=PL"
-//   );
-// });
-
-// Det jag skapar här är en fetch som lägger in bilder på ligans logga
-// till varje länk.
-// Jag skapar ett img element och sätter src och alt.
-
-const premierLeagueUrl = "https://api.football-data.org/v4/competitions/PL";
-const ChampionsLeagueUrl = "https://api.football-data.org/v4/competitions/CL";
-
 const premierLeagueIndex = 2;
 const championsLeagueIndex = 3;
 const ligue1Index = 5;
@@ -22,32 +5,47 @@ const bundesligaIndex = 6;
 const serieAIndex = 7;
 const laLigaIndex = 11;
 
-const apiKey = "d5d8a211dbbd4ef5849cc74165a5be01";
+// Har lagt nedan i helpers som utför åt både index.html och details.html
+// Nedan hämtar favoritlaget.
 
-let testUrl = "https://api.football-data.org/v4/competitions";
+// const apiKey = "d5d8a211dbbd4ef5849cc74165a5be01";
+// let urlTeams = `https://api.football-data.org/v4/teams`;
 
+// let valueFromLocalStorage = localStorage.getItem("favouriteTeamId");
+// console.log(localStorage.getItem("favouriteTeamId"));
+
+// function setFavTeam(id) {
+//   fetch((urlTeams += `/${id}`), {
+//     headers: {
+//       "X-Auth-Token": apiKey,
+//     },
+//   })
+//     .then((response) => response.json())
+//     .then((result) => {
+//       console.log(result);
+
+//       let favTeamLogo = document.createElement("img");
+//       favTeamLogo.setAttribute("src", result.crest);
+
+//       let favTeamName = document.createElement("h2");
+//       favTeamName.textContent = `Jag hejar på ${result.shortName}!`;
+
+//       headerHomePage.appendChild(favTeamLogo);
+//       headerHomePage.appendChild(favTeamName);
+//     });
+// }
+// setFavTeam(valueFromLocalStorage);
+
+// Test fetch
+apiKey = "d5d8a211dbbd4ef5849cc74165a5be01";
+let playerId = "";
+playerId = "7869";
+let urlCompetition = "https://api.football-data.org/v4/competitions";
+let urlTest =
+  "https://api.football-data.org/v4/persons/16275/matches?e=SUB_OUT&limit=10";
+let urlPerson = "https://api.football-data.org/v4/persons/" + playerId;
 function test() {
-  fetch(testUrl, {
-    headers: {
-      "X-Auth-Token": apiKey,
-    },
-  })
-    .then((response) => response.json())
-    .then((result) => {
-      //   let leagueImg = document.createElement("img");
-      //   leagueImg.setAttribute("src", result.emblem);
-      //   premierLeagueLink.appendChild(leagueImg);
-      console.log(result.competitions);
-    });
-}
-test();
-// test(2);
-// ============================================
-let leagueImg;
-let leagueLink;
-const divHome = document.querySelector("#divHome");
-function getLigueImg(index) {
-  fetch(testUrl, {
+  fetch(urlTest, {
     headers: {
       "X-Auth-Token": apiKey,
     },
@@ -55,31 +53,93 @@ function getLigueImg(index) {
     .then((response) => response.json())
     .then((result) => {
       console.log(result);
-      console.log(result.competitions[index].name);
-      console.log(result.competitions[index].code);
-      // skapar ett länkelement och sätter attributen.
-      leagueLink = document.createElement("a");
-      leagueLink.classList.add("aHome");
-      leagueLink.setAttribute(
-        "href",
-        `details.html?league=${result.competitions[index].name}&id=${result.competitions[index].code}`
-      );
-      // skapar bild på respektive ligas loga
-      leagueImg = document.createElement("img");
-      leagueImg.classList.add("imgHome");
-      leagueImg.setAttribute("src", result.competitions[index].emblem);
-      //  lägger in bilden i länken och lägger länken in i diven i
-      //  html-dokumentet
-      leagueLink.appendChild(leagueImg);
-      divHome.appendChild(leagueLink);
     });
 }
-getLigueImg(premierLeagueIndex);
-getLigueImg(championsLeagueIndex);
-getLigueImg(bundesligaIndex);
-getLigueImg(serieAIndex);
-getLigueImg(laLigaIndex);
-getLigueImg(ligue1Index);
+test();
+// ============================================
+let homeParagraph = document.querySelector("#pHome");
+let leagueImg;
+let leagueLink;
+const divHome = document.querySelector("#divHome");
+
+let premier = { img: "", name: "", code: "" };
+let champions = { img: "", name: "", code: "" };
+let bundesliga = { img: "", name: "", code: "" };
+let serieA = { img: "", name: "", code: "" };
+let laliga = { img: "", name: "", code: "" };
+let ligue1 = { img: "", name: "", code: "" };
+
+function getLigueImg() {
+  fetch(urlCompetition, {
+    headers: {
+      "X-Auth-Token": apiKey,
+    },
+  })
+    .then((response) => response.json())
+    .then((result) => {
+      // Nedan sätter jag bild, namn och id på respektive ligas objekt.
+      premier.img = result.competitions[premierLeagueIndex].emblem;
+      premier.name = result.competitions[premierLeagueIndex].name;
+      premier.code = result.competitions[premierLeagueIndex].code;
+
+      champions.img = result.competitions[championsLeagueIndex].emblem;
+      champions.name = result.competitions[championsLeagueIndex].name;
+      champions.code = result.competitions[championsLeagueIndex].code;
+
+      bundesliga.img = result.competitions[bundesligaIndex].emblem;
+      bundesliga.name = result.competitions[bundesligaIndex].name;
+      bundesliga.code = result.competitions[bundesligaIndex].code;
+
+      serieA.img = result.competitions[serieAIndex].emblem;
+      serieA.name = result.competitions[serieAIndex].name;
+      serieA.code = result.competitions[serieAIndex].code;
+
+      laliga.img = result.competitions[laLigaIndex].emblem;
+      laliga.name = result.competitions[laLigaIndex].name;
+      laliga.code = result.competitions[laLigaIndex].code;
+
+      ligue1.img = result.competitions[ligue1Index].emblem;
+      ligue1.name = result.competitions[ligue1Index].name;
+      ligue1.code = result.competitions[ligue1Index].code;
+
+      if (result.errorCode === 429) {
+        homeParagraph.textContent = `${result.message}...`;
+        // jag skapar en bild som fetchas från ett annat api med
+        // en random kattbild som visas medans man väntar med
+        // ett felmeddelande som säger att man behöver vänta
+      }
+
+      //   anropar funktion som hämtar ligans information.
+      // skickar med respektive ligas objekt.
+      setLigueImg(premier);
+      setLigueImg(champions);
+      setLigueImg(bundesliga);
+      setLigueImg(serieA);
+      setLigueImg(laliga);
+      setLigueImg(ligue1);
+    });
+}
+getLigueImg();
+
+function setLigueImg(league) {
+  // skapar ett länkelement och sätter attributen.
+  leagueLink = document.createElement("a");
+  leagueLink.classList.add("aHome");
+  leagueLink.setAttribute(
+    "href",
+    `details.html?league=${league.name}&id=${league.code}`
+  );
+  // skapar bild på respektive ligas loga
+  leagueImg = document.createElement("img");
+  leagueImg.classList.add("imgHome");
+  leagueImg.setAttribute("src", league.img);
+  leagueImg.setAttribute("alt", `Bild på ${league.name}s emblem`);
+  //  lägger in bilden i länken och lägger länken in i diven i
+  //  html-dokumentet
+  leagueLink.appendChild(leagueImg);
+  divHome.appendChild(leagueLink);
+}
+
 // ============================================
 
 // premierLeagueLink.appendChild(leagueImg);
