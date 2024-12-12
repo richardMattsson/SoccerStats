@@ -5,37 +5,6 @@ const bundesligaIndex = 6;
 const serieAIndex = 7;
 const laLigaIndex = 11;
 
-// Har lagt nedan i helpers som utför åt både index.html och details.html
-// Nedan hämtar favoritlaget.
-
-// const apiKey = "d5d8a211dbbd4ef5849cc74165a5be01";
-// let urlTeams = `https://api.football-data.org/v4/teams`;
-
-// let valueFromLocalStorage = localStorage.getItem("favouriteTeamId");
-// console.log(localStorage.getItem("favouriteTeamId"));
-
-// function setFavTeam(id) {
-//   fetch((urlTeams += `/${id}`), {
-//     headers: {
-//       "X-Auth-Token": apiKey,
-//     },
-//   })
-//     .then((response) => response.json())
-//     .then((result) => {
-//       console.log(result);
-
-//       let favTeamLogo = document.createElement("img");
-//       favTeamLogo.setAttribute("src", result.crest);
-
-//       let favTeamName = document.createElement("h2");
-//       favTeamName.textContent = `Jag hejar på ${result.shortName}!`;
-
-//       headerHomePage.appendChild(favTeamLogo);
-//       headerHomePage.appendChild(favTeamName);
-//     });
-// }
-// setFavTeam(valueFromLocalStorage);
-
 // Test fetch
 apiKey = "d5d8a211dbbd4ef5849cc74165a5be01";
 let playerId = "";
@@ -55,19 +24,22 @@ function test() {
       console.log(result);
     });
 }
-test();
+// test();
 // ============================================
 let homeParagraph = document.querySelector("#pHome");
 let leagueImg;
+let leagueImg2;
 let leagueLink;
+let leagueLink2;
 const divHome = document.querySelector("#divHome");
 
-let premier = { img: "", name: "", code: "" };
-let champions = { img: "", name: "", code: "" };
-let bundesliga = { img: "", name: "", code: "" };
-let serieA = { img: "", name: "", code: "" };
-let laliga = { img: "", name: "", code: "" };
-let ligue1 = { img: "", name: "", code: "" };
+// Här skapar jag en funktion som skapar objektstrukturen nedan
+// istället för repeteringen nedan.
+function League(name, emblem, code) {
+  this.name = name;
+  this.img = emblem;
+  this.code = code;
+}
 
 function getLigueImg() {
   fetch(urlCompetition, {
@@ -77,30 +49,30 @@ function getLigueImg() {
   })
     .then((response) => response.json())
     .then((result) => {
+      let teams = result.competitions;
+
+      let premier = teams[premierLeagueIndex];
+      let champions = teams[championsLeagueIndex];
+      let bundes = teams[bundesligaIndex];
+      let serA = teams[serieAIndex];
+      let laL = teams[laLigaIndex];
+      let lig1 = teams[ligue1Index];
+
       // Nedan sätter jag bild, namn och id på respektive ligas objekt.
-      premier.img = result.competitions[premierLeagueIndex].emblem;
-      premier.name = result.competitions[premierLeagueIndex].name;
-      premier.code = result.competitions[premierLeagueIndex].code;
-
-      champions.img = result.competitions[championsLeagueIndex].emblem;
-      champions.name = result.competitions[championsLeagueIndex].name;
-      champions.code = result.competitions[championsLeagueIndex].code;
-
-      bundesliga.img = result.competitions[bundesligaIndex].emblem;
-      bundesliga.name = result.competitions[bundesligaIndex].name;
-      bundesliga.code = result.competitions[bundesligaIndex].code;
-
-      serieA.img = result.competitions[serieAIndex].emblem;
-      serieA.name = result.competitions[serieAIndex].name;
-      serieA.code = result.competitions[serieAIndex].code;
-
-      laliga.img = result.competitions[laLigaIndex].emblem;
-      laliga.name = result.competitions[laLigaIndex].name;
-      laliga.code = result.competitions[laLigaIndex].code;
-
-      ligue1.img = result.competitions[ligue1Index].emblem;
-      ligue1.name = result.competitions[ligue1Index].name;
-      ligue1.code = result.competitions[ligue1Index].code;
+      let premierLeague = new League(
+        premier.name,
+        premier.emblem,
+        premier.code
+      );
+      let championsLeague = new League(
+        champions.name,
+        champions.emblem,
+        champions.code
+      );
+      let bundesliga = new League(bundes.name, bundes.emblem, bundes.code);
+      let serieA = new League(serA.name, serA.emblem, serA.code);
+      let laLiga = new League(laL.name, laL.emblem, laL.code);
+      let ligue1 = new League(lig1.name, lig1.emblem, lig1.code);
 
       if (result.errorCode === 429) {
         homeParagraph.textContent = `${result.message}...`;
@@ -108,14 +80,13 @@ function getLigueImg() {
         // en random kattbild som visas medans man väntar med
         // ett felmeddelande som säger att man behöver vänta
       }
-
       //   anropar funktion som hämtar ligans information.
       // skickar med respektive ligas objekt.
-      setLigueImg(premier);
-      setLigueImg(champions);
+      setLigueImg(premierLeague);
+      setLigueImg(championsLeague);
       setLigueImg(bundesliga);
       setLigueImg(serieA);
-      setLigueImg(laliga);
+      setLigueImg(laLiga);
       setLigueImg(ligue1);
     });
 }
@@ -129,15 +100,42 @@ function setLigueImg(league) {
     "href",
     `details.html?league=${league.name}&id=${league.code}`
   );
+  leagueLink2 = document.createElement("a");
+  leagueLink2.classList.add("aHome");
+  leagueLink2.setAttribute(
+    "href",
+    `details.html?league=${league.name}&id=${league.code}`
+  );
   // skapar bild på respektive ligas loga
   leagueImg = document.createElement("img");
   leagueImg.classList.add("imgHome");
   leagueImg.setAttribute("src", league.img);
   leagueImg.setAttribute("alt", `Bild på ${league.name}s emblem`);
+  leagueImg.style.backgroundColor = "white";
+
+  leagueImg2 = document.createElement("img");
+  leagueImg2.classList.add("imgHome");
+  leagueImg2.setAttribute("src", league.img);
+  leagueImg2.setAttribute("alt", `Bild på ${league.name}s emblem`);
+  leagueImg2.style.backgroundColor = "white";
   //  lägger in bilden i länken och lägger länken in i diven i
   //  html-dokumentet
+
+  let divBack = document.createElement("div");
+  divBack.classList.add("back");
+  let divFront = document.createElement("div");
+  divFront.classList.add("front");
   leagueLink.appendChild(leagueImg);
-  divHome.appendChild(leagueLink);
+  leagueLink2.appendChild(leagueImg2);
+  divFront.appendChild(leagueLink);
+  divBack.appendChild(leagueLink2);
+
+  let divExtra = document.createElement("div");
+  divExtra.classList.add("flipper");
+  // divExtra.appendChild(leagueLink);
+  divExtra.appendChild(divFront);
+  divExtra.appendChild(divBack);
+  divHome.appendChild(divExtra);
 }
 
 // ============================================

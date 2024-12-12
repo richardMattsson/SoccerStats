@@ -11,7 +11,6 @@ function test(url) {
       console.log(result);
     });
 }
-// test(testUrl);
 
 const params = new URLSearchParams(window.location.search);
 const queryString = window.location.search;
@@ -32,12 +31,15 @@ let teamNames = [];
 let numberOfWins = [];
 let numberOfGoals = [];
 
-// let teamId;
+let anchorCell;
+
 let leagueTable;
 let teamLink;
 let chartTitle = "";
 let chart;
+let chartCircle;
 
+let myTable = document.querySelector("#myTable");
 let tableDiv = document.querySelector("#tableDiv");
 const headerHomePage = document.querySelector("#headerHomePage");
 const ctx = document.querySelector("#myChart");
@@ -51,38 +53,36 @@ let paragraphElement = document.createElement("p");
 const canvas = document.createElement("canvas");
 const chartBtn = document.createElement("button");
 
-canvas.style.width = "700px";
-
-// let valueFromLocalStorage = localStorage.getItem("favouriteTeamId");
-// console.log(localStorage.getItem("favouriteTeamId"));
-
-// function setFavTeam(id) {
-//   fetch((urlTeams += `/${id}`), {
-//     headers: {
-//       "X-Auth-Token": apiKey,
-//     },
-//   })
-//     .then((response) => response.json())
-//     .then((result) => {
-//       console.log(result);
-
-//       let favTeamLogo = document.createElement("img");
-//       favTeamLogo.setAttribute("src", result.crest);
-
-//       let favTeamName = document.createElement("h2");
-//       favTeamName.textContent = `Jag hejar på ${result.shortName}!`;
-
-//       headerHomePage.appendChild(favTeamLogo);
-//       headerHomePage.appendChild(favTeamName);
-//     });
-// }
-// setFavTeam(valueFromLocalStorage);
-
 function showTeamMembers() {
   urlTeams = backUpUrlTeams;
-  teamLink.addEventListener("click", (event) => {
+
+  anchorCell.addEventListener("click", (event) => {
     tableDiv.innerHTML = "";
+    tableheader.innerHTML = "";
+    tablebody.innerHTML = "";
     urlTeams += `/${event.target.id}`;
+
+    let dataCircleChart = [
+      event.target.won,
+      event.target.draw,
+      event.target.lost,
+    ];
+    let labelsCircleChart = ["Vinster", "Oavgjorda", "Förluster"];
+
+    // Knapp rita diagram
+    let drawChartBtn = document.createElement("button");
+    drawChartBtn.textContent = "Rita diagram";
+    drawChartBtn.classList.add("teamBtn");
+    tableDiv.appendChild(drawChartBtn);
+
+    drawChartBtn.addEventListener("click", () => {
+      tableheader.innerHTML = "";
+      tablebody.innerHTML = "";
+      tableDiv.innerHTML = "";
+      ctx.style.display = "none";
+      cleanChart();
+      drawChartCircle(event.target.name, labelsCircleChart, dataCircleChart);
+    });
 
     fetch(urlTeams, {
       headers: {
@@ -96,9 +96,11 @@ function showTeamMembers() {
         let teamLogo = document.createElement("img");
         teamLogo.setAttribute("src", result.crest);
         tableDiv.appendChild(teamLogo);
-        // Knapp favoritlag
+
+        // Knapp lägga till favoritlag
         let favouriteBtn = document.createElement("button");
         favouriteBtn.textContent = "Spara som mitt lag";
+        favouriteBtn.classList.add("teamBtn");
         tableDiv.appendChild(favouriteBtn);
 
         // Här lägger jag till en eventlistener som lyssnar efter klick på knappen.
@@ -106,17 +108,18 @@ function showTeamMembers() {
         // sidan minns till nästa gång vilket favoritlag användaren har.
 
         favouriteBtn.addEventListener("click", () => {
-          console.log(result.name);
-          localStorage.setItem("favouriteTeamId", result.id);
+          sessionStorage.setItem("favouriteTeamId", result.id);
+          // favouriteDiv.style.display = "block";
         });
-
+        // Lägger till rubrik med lagets namn
         let teamHeader = document.createElement("h2");
         teamHeader.innerHTML = `${result.name}`;
         tableDiv.appendChild(teamHeader);
+        // Lägger till lagets tränares namn
         let coach = document.createElement("p");
         coach.innerHTML = `Coach: <strong>${result.coach.name}</strong>`;
         tableDiv.appendChild(coach);
-
+        // Går igenom alla spelare och skriver ut i listan
         result.squad.forEach((player) => {
           createAndAppendElements();
           paragraphElement.innerHTML = `${player.position}: <strong>${player.name}</strong>.`;
@@ -124,20 +127,80 @@ function showTeamMembers() {
       });
   });
 }
+
 function drawTable(table) {
+  cleanChart();
+
+  let thead = document.querySelector("#myTable thead");
+  let rowHead = document.createElement("tr");
+  let thData = ["Position", "Namn", "Vinster", "Oavgjorda", "Förluster"];
+
+  thData.forEach((data) => {
+    let cell = document.createElement("th");
+    cell.textContent = data;
+    rowHead.appendChild(cell);
+  });
+
+  thead.appendChild(rowHead);
+
   table.forEach((object) => {
-    teamLink = document.createElement("a");
-    divElement = document.createElement("div");
-    divElement.style.border = "1px solid black";
-    teamLink.innerHTML = `${object.position}. ${object.team.name}`;
-    teamLink.id = `${object.team.id}`;
-    divElement.appendChild(teamLink);
-    tableDiv.appendChild(divElement);
+    // teamLink = document.createElement("a");
+    // teamLink.innerHTML = `${object.position} | ${object.team.name} | Vinster: ${object.won} | Oavgjorda: ${object.draw} | Förluster: ${object.lost}`;
+    // teamLink.id = `${object.team.id}`;
+    // teamLink.name = object.team.name;
+    // teamLink.won = object.won;
+    // teamLink.draw = object.draw;
+    // teamLink.lost = object.lost;
+
+    let tbody = document.querySelector("#myTable tbody");
+    console.log(tbody);
+
+    let row = document.createElement("tr");
+
+    let rowData = [
+      JSON.stringify(object.position),
+      object.team.name,
+      JSON.stringify(object.won),
+      JSON.stringify(object.draw),
+      JSON.stringify(object.lost),
+    ];
+
+    rowData.forEach((data, index) => {
+      if (index === 1) {
+        let cell = document.createElement("td");
+        cell.classList.add("cellTeams");
+        anchorCell = document.createElement("a");
+        anchorCell.classList.add("tableTeams");
+        anchorCell.textContent = data;
+        anchorCell.id = object.team.id;
+        anchorCell.name = object.team.name;
+        anchorCell.won = object.won;
+        anchorCell.draw = object.draw;
+        anchorCell.lost = object.lost;
+
+        cell.appendChild(anchorCell);
+        row.appendChild(cell);
+      } else {
+        let cell = document.createElement("td");
+        cell.textContent = data;
+        row.appendChild(cell);
+        console.log(index);
+      }
+    });
+    // console.log(row.innerHTML);
+    tbody.appendChild(row);
+
+    // divElement = document.createElement("div");
+    // divElement.classList.add("tableDiv");
+
+    // divElement.appendChild(teamLink);
+    // tableDiv.appendChild(divElement);
 
     showTeamMembers();
   });
 }
 function drawChart(chartTitle, labels, data) {
+  ctx.style.width = "80vw";
   Chart.defaults.elements.bar.borderWidth = 2;
   chart = new Chart(ctx, {
     type: "bar",
@@ -179,12 +242,48 @@ function drawChart(chartTitle, labels, data) {
     },
   });
 }
+function drawChartCircle(chartTitle, labels, data) {
+  ctx.style.width = "40vw";
+  chartCircle = new Chart(ctx, {
+    type: "doughnut",
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: chartTitle,
+          data: data,
+          backgroundColor: [
+            "rgb(0, 128, 0)", // green
+            "rgb(255, 205, 86)", // yellow
+            "rgb(255, 99, 132)", // red
+          ],
+        },
+      ],
+    },
+    labels: ["Red", "Yellow", "Blue"],
+    options: {
+      plugins: {
+        legend: {
+          labels: {
+            font: {
+              size: 16,
+            },
+            color: "black",
+          },
+        },
+      },
+    },
+  });
+}
 function cleanChart() {
   tableDiv.innerHTML = "";
   ctx.style.display = "block";
 
   if (chart) {
     chart.destroy();
+  }
+  if (chartCircle) {
+    chartCircle.destroy();
   }
 }
 function cleanDiv() {
@@ -203,14 +302,16 @@ function createAndAppendElements() {
   divElement = document.createElement("div");
   paragraphElement = document.createElement("p");
   divElement.style.border = "1px solid black";
+
   divElement.appendChild(paragraphElement);
   tableDiv.appendChild(divElement);
 }
 
 pShowTable.addEventListener("click", () => {
+  tableheader.innerHTML = "";
+  tablebody.innerHTML = "";
   tableDiv.innerHTML = "";
   ctx.style.display = "none";
-
   fetch(urlStandings, {
     headers: {
       "X-Auth-Token": apiKey,
@@ -224,7 +325,10 @@ pShowTable.addEventListener("click", () => {
 });
 
 showAmountWins.addEventListener("click", () => {
+  cleanChart();
   cleanDiv();
+  tableheader.innerHTML = "";
+  tablebody.innerHTML = "";
 
   fetch(urlStandings, {
     headers: {
@@ -251,6 +355,9 @@ showAmountWins.addEventListener("click", () => {
 
 amountOfScores.addEventListener("click", () => {
   cleanDiv();
+  ctx.style.display = "none";
+  tableheader.innerHTML = "";
+  tablebody.innerHTML = "";
 
   fetch(urlStandings, {
     headers: {

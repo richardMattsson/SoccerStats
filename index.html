@@ -5,19 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fotbollssidan</title>
     <link rel="icon" href="favicon.png" type="image/x-icon" />
-
+    <!-- länk till bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <!-- ikoner bootstrap -->
+    <!-- <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    /> -->
     <link rel="stylesheet" href="style.css" />
   </head>
-  <body id="bodyHomePage">
+  <body id="bodyHomePage" class="bg-dark text-light">
     <header id="headerHomePage">
       <h1 id="h1Home">Fotbollssidan</h1>
       <p id="pHome">
         Välj din liga - Alternativt att det ska finnas lite infotext här om vad
         webbplatsen innehåller och hur den kan nivaidera
       </p>
+      <div class="favouriteDiv"></div>
     </header>
     <nav id="navHomePage">
-      <div id="divHome">
+      <div id="divHome" class="flip-container">
+        <!-- <div> -->
         <!-- <a
           id="premierLeague"
           class="aHome"
@@ -68,6 +81,7 @@
             alt="ligue 1 logo"
         />
         </a> -->
+        <!-- </div> -->
       </div>
     </nav>
 
