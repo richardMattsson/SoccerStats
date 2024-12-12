@@ -20,14 +20,21 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body id="bodyHomePage" class="bg-dark text-light">
+    <section id="section">
+      <a id="homeText" href="index.html"
+        ><p>Hem</p>
+        <img id="homeImg" src="favicon.png" alt="bild på hemknapp"
+      /></a>
+      <!-- <pre>
+    Infotext om vad 
+    webbplatsen 
+    innehåller och hur 
+    den kan nivaidera
+      </pre> -->
+    </section>
     <header id="headerHomePage">
       <h1 id="h1Home">Liga</h1>
-      <a href="index.html"
-        >Fotbollssidan<img
-          id="homeImg"
-          src="favicon.png"
-          alt="bild på hemknapp"
-      /></a>
+      <img id="imgLeagueLogo" alt="" />
     </header>
 
     <aside id="aside">
@@ -41,40 +48,48 @@
         <p class="pStyle" id="amountOfScores">Antal mål per lag i ligan</p>
       </div>
     </nav>
-    <main>
-      <table id="myTable" class="table-sm table-bordered table-striped">
-        <thead id="tableheader">
-          <!-- <tr> -->
-          <!-- <th>Position</th>
-        <th>Name</th>
-        <th>Won</th>
-        <th>Draw</th>
-        <th>Lost</th>-->
-          <!-- </tr> -->
-        </thead>
+    <main id="main">
+      <article>
+        <figure id="figureArticle"></figure>
+        <table id="myTable" class="table-sm table-bordered table-striped">
+          <thead id="tableheader">
+            <!-- <tr> -->
+            <!-- <th>Position</th>
+          <th>Name</th>
+          <th>Won</th>
+          <th>Draw</th>
+          <th>Lost</th>-->
+            <!-- </tr> -->
+          </thead>
 
-        <tbody id="tablebody">
-          <!-- <tr>
-            <td>position</td>
-            <td>namn</td>
-            <td>vinst</td>
-            <td>lika</td>
-            <td>förlust</td>
-          </tr>
-          -->
-        </tbody>
-      </table>
+          <tbody id="tablebody">
+            <!-- <tr>
+              <td>position</td>
+              <td>namn</td>
+              <td>vinst</td>
+              <td>lika</td>
+              <td>förlust</td>
+            </tr>
+            -->
+          </tbody>
+        </table>
 
-      <div id="tableDiv">
-        <!-- <p></p> -->
-      </div>
+        <!-- <div id="tableDiv">
+          <p></p>
+        </div> -->
 
-      <div id="canvasDiv">
-        <canvas id="myChart"></canvas>
-      </div>
+        <div id="canvasDiv">
+          <canvas id="myChart"></canvas>
+        </div>
+      </article>
     </main>
 
-    <footer><p>Made by Richard</p></footer>
+    <footer>
+      <p>
+        Made by Richard | Thanks to football-data.org and Daniel who made this
+        API possible to use.
+      </p>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- <script src="index.js"></script> -->

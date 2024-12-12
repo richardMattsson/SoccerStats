@@ -1,18 +1,10 @@
-body {
-  background-color: green;
-  color: black;
-}
 a {
   text-decoration: none;
-  color: black;
+
   cursor: pointer;
 }
 a:hover {
   color: antiquewhite;
-}
-
-.hidden {
-  display: none;
 }
 
 .pStyle {
@@ -23,7 +15,7 @@ a:hover {
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr 1fr;
   grid-template-areas:
-    "header header aside"
+    "section header aside"
     "nav nav nav"
     "main main main"
     "footer footer footer";
@@ -33,10 +25,21 @@ a:hover {
   height: 97vh;
   /* border: 1px solid black; */
 }
+#section {
+  grid-area: section;
+  border: 1px solid coral;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 25vh;
+  width: 15vw;
+}
 #headerHomePage {
   grid-area: header;
-  /* justify-content: center; */
-  /* align-items: center; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   padding: 5px;
   border: 1px solid red;
   margin: 0;
@@ -52,19 +55,32 @@ aside {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-
   border: 1px solid green;
-  width: 40vw;
-  padding: 10px;
-  margin-bottom: 20px;
+  width: 90vw;
+  height: 20vh;
 }
 main {
   grid-area: main;
   border: 1px solid orange;
+  width: 90vw;
+  /* height: 90%; */
+  display: flex;
+  justify-content: center;
 }
 footer {
   grid-area: footer;
   border: 1px solid purple;
+}
+#infoText {
+  font-size: 20px;
+  font-family: sans-serif;
+}
+#imgLeagueLogo {
+  background-color: aliceblue;
+  border-radius: 5%;
+  padding: 5%;
+  margin-top: 5%;
+  width: 150px;
 }
 #myTable {
 }
@@ -81,8 +97,8 @@ footer {
   /* border: 1px solid black; */
   /* justify-content: space-between; */
   padding: 10px;
-  margin: 5px;
-  width: 150px;
+  /* margin-top: 150px; */
+  width: 100px;
   border-radius: 10px;
   /* transform: rotate(45deg); */
   /* animation: spin 10s linear infinite; */
@@ -152,11 +168,40 @@ footer {
 
   /* border: 1px solid black; */
 }
+.divButtons {
+  display: inline;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+#figureArticle {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  justify-content: space-around;
+  width: 70vw;
+}
 #myChart {
+  width: 100vw;
+}
+.canvas {
   width: 50vw;
 }
+article {
+  width: 85vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 #homeImg {
-  width: 40px;
+  width: 30px;
+}
+#homeText {
+  color: aliceblue;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
 }
 .tableDiv {
   margin-bottom: 4px;
@@ -164,12 +209,20 @@ footer {
 }
 .teamBtn {
   margin-right: 5px;
+  border: 1px solid white;
+}
+.coachName {
+  text-align: center;
+  margin-top: 10px;
 }
 .favouriteDiv {
   /* display: none; */
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 }
 .tableTeams {
-  color: rgba(240, 248, 255, 0.723);
+  color: rgba(240, 248, 255, 0.89);
 }
 .tableTeams:hover {
   color: black;
@@ -177,4 +230,11 @@ footer {
 .cellTeams:hover {
   background-color: grey;
   cursor: pointer;
+}
+.favTeamLogo {
+  width: 150px;
+  margin-bottom: 5%;
+}
+.favTeamName {
+  font-size: 20px;
 }

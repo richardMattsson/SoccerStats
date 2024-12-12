@@ -20,17 +20,29 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body id="bodyHomePage" class="bg-dark text-light">
+    <section id="section">
+      <a id="homeText" href="index.html"
+        ><p>Hem</p><img id="homeImg" src="favicon.png" alt="bild på hemknapp"
+      /></a>
+      
+    </section>
     <header id="headerHomePage">
       <h1 id="h1Home">Fotbollssidan</h1>
-      <p id="pHome">
-        Välj din liga - Alternativt att det ska finnas lite infotext här om vad
-        webbplatsen innehåller och hur den kan nivaidera
-      </p>
-      <div class="favouriteDiv"></div>
+      <p id="pHome">Välj en liga</p>
+
+      <!-- <div class="favouriteDiv"></div> -->
     </header>
 
+    <aside id="aside">
+      <div class="favouriteDiv"></div>
+    </aside>
+
     <nav id="navHomePage">
-      <div id="divHome" class="flip-container">
+      <pre id="infoText">
+        
+      På denna webbplats kan du kolla in de sex största forbollsligorna i Europa.
+      Klicka vidare och välj ditt favoritlag, se tabeller och statistik.
+      </pre>
         <!-- <div> -->
         <!-- <a
           id="premierLeague"
@@ -85,7 +97,9 @@
         <!-- </div> -->
       </div>
     </nav>
-
+    <main>
+      <div id="divHome" class="flip-container">
+    </main>
     <!-- [x] Skapa 2 html sidor, en hemsida och en sida dit användaren kan klicka in sig på. 
          [] Använd Web Storage så användaren kan spara in något som är kvar även om sidan stängs.
          [x] Använd Chart.js på ett sätt så det finns möjlighet att visualisera data från webbtjänsten.
@@ -96,7 +110,8 @@
             Webbsidan ska drivas med (minst) ett webbformulär. alert eller 
             prompt ska alltså inte användas. 
     -->
-    <footer><p>Made by Richard</p></footer>
+    <footer><p>Made by Richard | Thanks to football-data.org and Daniel who made this
+      API possible to use.</p></footer>
     <!-- <script src="details.js"></script> -->
     <script src="helpers.js"></script>
     <script src="index.js"></script>

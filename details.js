@@ -12,13 +12,15 @@ function test(url) {
     });
 }
 
-const params = new URLSearchParams(window.location.search);
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const league = urlParams.get("league");
 const id = urlParams.get("id");
+const emblem = urlParams.get("emblem");
+console.log(id);
 
 document.querySelector("#h1Home").innerHTML = league;
+document.querySelector("#imgLeagueLogo").src = emblem;
 
 let urlStandings = `https://api.football-data.org/v4/competitions/${id}/standings`;
 let backUpStanding = `https://api.football-data.org/v4/competitions/${id}/standings`;
@@ -40,13 +42,17 @@ let chart;
 let chartCircle;
 
 let myTable = document.querySelector("#myTable");
+let tableHeader = document.querySelector("#tableheader");
 let tableDiv = document.querySelector("#tableDiv");
+let main = document.querySelector("#main");
+let figureArticle = document.querySelector("#figureArticle");
 
 let thead = document.querySelector("#myTable thead");
 let tbody = document.querySelector("#myTable tbody");
 
 const headerHomePage = document.querySelector("#headerHomePage");
-const ctx = document.querySelector("#myChart");
+const canvasContext = document.querySelector("#myChart");
+canvasContext.classList.add("canvas");
 const canvasDiv = document.querySelector("#canvasDiv");
 let showAmountWins = document.querySelector("#amountOfWins");
 let amountOfScores = document.querySelector("#amountOfScores");
@@ -54,39 +60,19 @@ let pShowTable = document.querySelector("#showTable");
 
 let divElement = document.createElement("div");
 let paragraphElement = document.createElement("p");
-const canvas = document.createElement("canvas");
+// const canvas = document.createElement("canvas");
 const chartBtn = document.createElement("button");
 
 function showTeamMembers() {
   urlTeams = backUpUrlTeams;
 
   anchorCell.addEventListener("click", (event) => {
-    tableDiv.innerHTML = "";
-    tableheader.innerHTML = "";
-    tablebody.innerHTML = "";
+    // tableDiv.innerHTML = "";
+    tableHeader.innerHTML = "";
+    tbody.innerHTML = "";
     urlTeams += `/${event.target.id}`;
 
-    let dataCircleChart = [
-      event.target.won,
-      event.target.draw,
-      event.target.lost,
-    ];
-    let labelsCircleChart = ["Vinster", "Oavgjorda", "Förluster"];
-
-    // Knapp rita diagram
-    let drawChartBtn = document.createElement("button");
-    drawChartBtn.textContent = "Rita diagram";
-    drawChartBtn.classList.add("teamBtn");
-    tableDiv.appendChild(drawChartBtn);
-
-    drawChartBtn.addEventListener("click", () => {
-      tableheader.innerHTML = "";
-      tablebody.innerHTML = "";
-      tableDiv.innerHTML = "";
-      ctx.style.display = "none";
-      cleanChart();
-      drawChartCircle(event.target.name, labelsCircleChart, dataCircleChart);
-    });
+    console.log(event.target.id);
 
     fetch(urlTeams, {
       headers: {
@@ -95,17 +81,57 @@ function showTeamMembers() {
     })
       .then((response) => response.json())
       .then((result) => {
-        console.log(result);
-        // Lagets flagga
+        // Lägger till rubrik med lagets namn
+        let teamHeader = document.createElement("h2");
+        teamHeader.innerHTML = `${result.name}`;
+        teamHeader.style.textAlign = "center";
+        figureArticle.appendChild(teamHeader);
+        // Lagets flagga / logo
         let teamLogo = document.createElement("img");
         teamLogo.setAttribute("src", result.crest);
-        tableDiv.appendChild(teamLogo);
+        teamLogo.classList.add("favTeamLogo");
+        figureArticle.appendChild(teamLogo);
+
+        // Knapp rita diagram
+        let drawChartBtn = document.createElement("button");
+        drawChartBtn.textContent = "Rita diagram";
+        drawChartBtn.classList.add("teamBtn", "btn", "btn-dark");
+        // figureArticle.appendChild(drawChartBtn);
 
         // Knapp lägga till favoritlag
         let favouriteBtn = document.createElement("button");
         favouriteBtn.textContent = "Spara som mitt lag";
-        favouriteBtn.classList.add("teamBtn");
-        tableDiv.appendChild(favouriteBtn);
+        favouriteBtn.classList.add("teamBtn", "btn", "btn-dark");
+        //  figureArticle.appendChild(favouriteBtn);
+
+        let divButtons = document.createElement("div");
+        divButtons.appendChild(drawChartBtn);
+        divButtons.appendChild(favouriteBtn);
+        divButtons.classList.add("divButtons");
+        figureArticle.appendChild(divButtons);
+
+        // Skapar info som ska in i cirkeldiagrammet.
+        let labelsCircleChart = ["Vinster", "Oavgjorda", "Förluster"];
+        let dataCircleChart = [
+          event.target.won,
+          event.target.draw,
+          event.target.lost,
+        ];
+
+        // Lyssnar efter klick och skapar då ett diagram.
+        drawChartBtn.addEventListener("click", () => {
+          tableHeader.innerHTML = "";
+          tablebody.innerHTML = "";
+          // figureArticle.innerHTML = "";
+          // tableDiv.innerHTML = "";
+          canvasContext.style.display = "none";
+          cleanChart();
+          drawChartCircle(
+            event.target.name,
+            labelsCircleChart,
+            dataCircleChart
+          );
+        });
 
         // Här lägger jag till en eventlistener som lyssnar efter klick på knappen.
         // Om knappen trycks på sparas laget undan i local storage vilket gör att
@@ -116,18 +142,44 @@ function showTeamMembers() {
           location.reload();
           // favouriteDiv.style.display = "block";
         });
-        // Lägger till rubrik med lagets namn
-        let teamHeader = document.createElement("h2");
-        teamHeader.innerHTML = `${result.name}`;
-        tableDiv.appendChild(teamHeader);
+
         // Lägger till lagets tränares namn
         let coach = document.createElement("p");
         coach.innerHTML = `Coach: <strong>${result.coach.name}</strong>`;
-        tableDiv.appendChild(coach);
+        coach.classList.add("coachName");
+        // coach.style.textAlign = "center";
+        // coach.style.marginTop = "10px";
+        figureArticle.appendChild(coach);
         // Går igenom alla spelare och skriver ut i listan
+
+        // Här skapar jag tableheader för tabellens struktur
+        let rowHead = document.createElement("tr");
+        let thData = ["Position", "Namn"];
+
+        thData.forEach((data) => {
+          let cell = document.createElement("td");
+          cell.textContent = data;
+          rowHead.appendChild(cell);
+        });
+
+        thead.appendChild(rowHead);
+
         result.squad.forEach((player) => {
-          createAndAppendElements();
-          paragraphElement.innerHTML = `${player.position}: <strong>${player.name}</strong>.`;
+          // här lägger jag till data om varje lag i tabellen
+          let row = document.createElement("tr");
+          let rowData = [player.position, player.name];
+          rowData.forEach((data) => {
+            // här skapar jag td element och lägger in info
+            // om varje spelare som ska in i tabellen.
+            let cell = document.createElement("td");
+            cell.textContent = data;
+            row.appendChild(cell);
+          });
+          // jag lägger in raden in i tablebody
+          tbody.appendChild(row);
+
+          // createAndAppendElements();
+          // paragraphElement.innerHTML = `${player.position}: <strong>${player.name}</strong>.`;
         });
       });
   });
@@ -137,7 +189,16 @@ function drawTable(table) {
   cleanChart();
 
   let rowHead = document.createElement("tr");
-  let thData = ["Position", "Namn", "Vinster", "Oavgjorda", "Förluster"];
+  let thData = [
+    "Position",
+    "Namn",
+    "Matcher",
+    "Vinster",
+    "Oavgjorda",
+    "Förluster",
+    "Gjorda mål",
+    "Insläppta mål",
+  ];
 
   thData.forEach((data) => {
     let cell = document.createElement("th");
@@ -158,11 +219,14 @@ function drawTable(table) {
 
     let row = document.createElement("tr");
     let rowData = [
-      JSON.stringify(object.position),
+      object.position,
       object.team.name,
-      JSON.stringify(object.won),
-      JSON.stringify(object.draw),
-      JSON.stringify(object.lost),
+      object.playedGames,
+      object.won,
+      object.draw,
+      object.lost,
+      object.goalsFor,
+      object.goalsAgainst,
     ];
 
     rowData.forEach((data, index) => {
@@ -194,7 +258,7 @@ function drawTable(table) {
         row.appendChild(cell);
       }
     });
-    // jag lägger in raden in i tablebody
+    // jag lägger in raden in i tbody
     tbody.appendChild(row);
 
     // divElement = document.createElement("div");
@@ -206,10 +270,22 @@ function drawTable(table) {
     showTeamMembers();
   });
 }
+
+fetch(urlStandings, {
+  headers: {
+    "X-Auth-Token": apiKey,
+  },
+})
+  .then((response) => response.json())
+  .then((result) => {
+    console.log(result.standings[0].table);
+    drawTable(result.standings[0].table);
+  });
+
 function drawChart(chartTitle, labels, data) {
-  ctx.style.width = "80vw";
+  canvasContext.style.width = "80vw";
   Chart.defaults.elements.bar.borderWidth = 2;
-  chart = new Chart(ctx, {
+  chart = new Chart(canvasContext, {
     type: "bar",
     data: {
       labels: labels,
@@ -219,39 +295,39 @@ function drawChart(chartTitle, labels, data) {
           data: data,
           borderWidth: 1,
           barThickness: 20,
-          backgroundColor: "white",
+          backgroundColor: "lightgrey",
           borderColor: "black",
         },
       ],
     },
     options: {
-      indexAxis: "x",
+      indexAxis: "y",
       plugins: {
         legend: {
           labels: {
-            color: "black",
+            color: "white",
           },
         },
       },
       scales: {
         y: {
           beginAtZero: true,
-          ticks: { color: "black" },
+          ticks: { color: "white" },
         },
         x: {
           grid: {
             offset: false,
           },
           height: "1000px",
-          ticks: { color: "black" },
+          ticks: { color: "white" },
         },
       },
     },
   });
 }
 function drawChartCircle(chartTitle, labels, data) {
-  ctx.style.width = "40vw";
-  chartCircle = new Chart(ctx, {
+  canvasContext.style.width = "40vw";
+  chartCircle = new Chart(canvasContext, {
     type: "doughnut",
     data: {
       labels: labels,
@@ -259,11 +335,7 @@ function drawChartCircle(chartTitle, labels, data) {
         {
           label: chartTitle,
           data: data,
-          backgroundColor: [
-            "rgb(0, 128, 0)", // green
-            "rgb(255, 205, 86)", // yellow
-            "rgb(255, 99, 132)", // red
-          ],
+          backgroundColor: ["green", "yellow", "red"],
         },
       ],
     },
@@ -275,7 +347,7 @@ function drawChartCircle(chartTitle, labels, data) {
             font: {
               size: 16,
             },
-            color: "black",
+            color: "white",
           },
         },
       },
@@ -283,8 +355,10 @@ function drawChartCircle(chartTitle, labels, data) {
   });
 }
 function cleanChart() {
-  tableDiv.innerHTML = "";
-  ctx.style.display = "block";
+  // tableDiv.innerHTML = "";
+  tableHeader.innerHTML = "";
+  tbody.innerHTML = "";
+  canvasContext.style.display = "block";
 
   if (chart) {
     chart.destroy();
@@ -294,9 +368,11 @@ function cleanChart() {
   }
 }
 function cleanDiv() {
-  tableDiv.innerHTML = "";
-  tableDiv.appendChild(chartBtn);
-  ctx.style.display = "none";
+  // tableDiv.innerHTML = "";
+  tableHeader.innerHTML = "";
+  tbody.innerHTML = "";
+  myTable.appendChild(chartBtn);
+  canvasContext.style.display = "none";
   chartBtn.textContent = "Draw chart";
 
   if (teamNames.length > 0) {
@@ -311,15 +387,17 @@ function createAndAppendElements() {
   divElement.style.border = "1px solid black";
 
   divElement.appendChild(paragraphElement);
-  tableDiv.appendChild(divElement);
+  myTable.appendChild(divElement);
 }
 
 pShowTable.addEventListener("click", () => {
-  tableheader.innerHTML = "";
-  tablebody.innerHTML = "";
+  figureArticle.innerHTML = "";
+  tableHeader.innerHTML = "";
+  tbody.innerHTML = "";
 
-  tableDiv.innerHTML = "";
-  ctx.style.display = "none";
+  // tableDiv.innerHTML = "";
+
+  canvasContext.style.display = "none";
 
   fetch(urlStandings, {
     headers: {
@@ -335,9 +413,18 @@ pShowTable.addEventListener("click", () => {
 
 showAmountWins.addEventListener("click", () => {
   cleanChart();
-  cleanDiv();
-  tableheader.innerHTML = "";
-  tablebody.innerHTML = "";
+  figureArticle.innerHTML = "";
+  // cleanDiv();
+  canvasContext.style.display = "none";
+
+  if (teamNames.length > 0) {
+    numberOfGoals = [];
+    numberOfWins = [];
+    teamNames = [];
+  }
+  chartBtn.textContent = "Draw chart";
+  chartBtn.classList.add("teamBtn", "btn", "btn-dark");
+  figureArticle.appendChild(chartBtn);
 
   fetch(urlStandings, {
     headers: {
@@ -347,16 +434,43 @@ showAmountWins.addEventListener("click", () => {
     .then((response) => response.json())
     .then((result) => {
       leagueTable = result.standings[0].table;
+
+      // Här skapar jag tableheader för antal vinster i ligan
+      let rowHead = document.createElement("tr");
+      let thData = ["Namn", "Vinster"];
+
+      thData.forEach((data) => {
+        let cell = document.createElement("td");
+        cell.textContent = data;
+        rowHead.appendChild(cell);
+      });
+
+      thead.appendChild(rowHead);
+
       leagueTable.forEach((object) => {
         teamNames.push(object.team.name);
         numberOfWins.push(object.won);
-        createAndAppendElements();
-        paragraphElement.innerHTML = `${object.team.name}. ${object.won} vinster. `;
+
+        // här lägger jag till data om varje lag i tabellen
+        let row = document.createElement("tr");
+        let rowData = [object.team.name, object.won];
+        rowData.forEach((data) => {
+          // här skapar jag td element och lägger in data
+          // om varje lag som ska in i tabellen.
+          let cell = document.createElement("td");
+          cell.textContent = data;
+          row.appendChild(cell);
+        });
+        // jag lägger in raden in i tablebody
+        tbody.appendChild(row);
+
+        // createAndAppendElements();
+        // paragraphElement.innerHTML = `${object.team.name}. ${object.won} vinster. `;
       });
 
       chartBtn.addEventListener("click", () => {
         cleanChart();
-        chartTitle = "Antal vinster";
+        chartTitle = "Antal vinster per lag i ligan.";
         drawChart(chartTitle, teamNames, numberOfWins);
       });
     });
@@ -364,9 +478,9 @@ showAmountWins.addEventListener("click", () => {
 
 amountOfScores.addEventListener("click", () => {
   cleanDiv();
-  ctx.style.display = "none";
-  tableheader.innerHTML = "";
-  tablebody.innerHTML = "";
+  canvasContext.style.display = "none";
+  // tableheader.innerHTML = "";
+  // tablebody.innerHTML = "";
 
   fetch(urlStandings, {
     headers: {
@@ -385,6 +499,8 @@ amountOfScores.addEventListener("click", () => {
 
       chartBtn.addEventListener("click", () => {
         cleanChart();
+        tableHeader.innerHTML = "";
+        tablebody.innerHTML = "";
         chartTitle = "Antal mål";
         drawChart(chartTitle, teamNames, numberOfGoals);
       });

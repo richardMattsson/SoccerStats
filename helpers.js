@@ -11,11 +11,6 @@ console.log(sessionStorage.IsThisFirstTime_Log_From_LiveServer);
 
 let asideElement = document.querySelector("#aside");
 
-if (sessionStorage.IsThisFirstTime_Log_From_LiveServer) {
-  // favouriteDiv.style.display = "none";
-  console.log("hej");
-}
-
 setFavTeam(urlFromSessionStorage);
 
 function setFavTeam(url) {
@@ -31,11 +26,13 @@ function setFavTeam(url) {
 
       let favTeamLogo = document.createElement("img");
       favTeamLogo.setAttribute("src", result.crest);
+      favTeamLogo.classList.add("favTeamLogo");
 
       // favTeamLogo.style.backgroundColor = "white";
 
       let favTeamName = document.createElement("h2");
       favTeamName.textContent = `Jag hejar på ${result.shortName}!`;
+      favTeamName.classList.add("favTeamName");
 
       favouriteDiv.appendChild(favTeamLogo);
       favouriteDiv.appendChild(favTeamName);

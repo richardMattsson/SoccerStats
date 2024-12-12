@@ -5,13 +5,15 @@ const bundesligaIndex = 6;
 const serieAIndex = 7;
 const laLigaIndex = 11;
 
-// Test fetch
 apiKey = "d5d8a211dbbd4ef5849cc74165a5be01";
 let playerId = "";
 playerId = "7869";
 let urlCompetition = "https://api.football-data.org/v4/competitions";
-let urlTest =
-  "https://api.football-data.org/v4/persons/16275/matches?e=SUB_OUT&limit=10";
+
+// Test fetch
+let urlChampionsLeagueMatches =
+  "https://api.football-data.org/v4/competitions/CL/matches";
+let urlTest = "https://api.football-data.org/v4/competitions/PL/matches";
 let urlPerson = "https://api.football-data.org/v4/persons/" + playerId;
 function test() {
   fetch(urlTest, {
@@ -24,7 +26,7 @@ function test() {
       console.log(result);
     });
 }
-// test();
+test();
 // ============================================
 let homeParagraph = document.querySelector("#pHome");
 let leagueImg;
@@ -98,13 +100,13 @@ function setLigueImg(league) {
   leagueLink.classList.add("aHome");
   leagueLink.setAttribute(
     "href",
-    `details.html?league=${league.name}&id=${league.code}`
+    `details.html?league=${league.name}&id=${league.code}&emblem=${league.img}`
   );
   leagueLink2 = document.createElement("a");
   leagueLink2.classList.add("aHome");
   leagueLink2.setAttribute(
     "href",
-    `details.html?league=${league.name}&id=${league.code}`
+    `details.html?league=${league.name}&id=${league.code}&emblem=${league.img}`
   );
   // skapar bild på respektive ligas loga
   leagueImg = document.createElement("img");
@@ -140,44 +142,6 @@ function setLigueImg(league) {
 
 // ============================================
 
-// premierLeagueLink.appendChild(leagueImg);
-// const ctx = document.getElementById("myChart");
-// Chart.defaults.elements.bar.borderWidth = 2;
-// let chartBtn = document.querySelector("#chart");
-// chartBtn.addEventListener("click", () => {
-//   new Chart(ctx, {
-//     type: "bar",
-//     data: {
-//       labels: teamNames,
-//       datasets: [
-//         {
-//           label: "Points",
-//           data: tablePosition,
-//           borderWidth: 1,
-//           barThickness: 10,
-//           // backgroundColor: "black",
-//           borderColor: "black",
-//         },
-//       ],
-//     },
-//     options: {
-//       indexAxis: "y",
-//       scales: {
-//         y: {
-//           beginAtZero: true,
-//         },
-//         x: {
-//           grid: {
-//             offset: true,
-//           },
-//           height: "1000px",
-//           color: "black",
-//         },
-//       },
-//     },
-//   });
-// });
-
 // let championsBtn = document.querySelector("#clBtn");
 // championsBtn.addEventListener("click", () => {
 //   let championsLeagueMatches =
@@ -198,12 +162,13 @@ function setLigueImg(league) {
 //       matches.forEach((match) => {
 //         if (match.status === "FINISHED") {
 //           let pTitle = document.createElement("p");
-//           pTitle.style.border = "1px solid black";
+//
 //           pTitle.textContent = `Matchday: ${match.matchday}. `;
 //           document.body.appendChild(pTitle);
+
 //           let p = document.createElement("p");
-//           p.style.border = "1px solid black";
-//           p.style.backgroundColor = "lightgreen";
+//
+//
 //           p.innerHTML = `<a href="index2.html">${match.homeTeam.name}</a> ${match.score.fullTime.home} - ${match.score.fullTime.away} <a href="index3.html">${match.awayTeam.name}</a>`;
 //           document.body.appendChild(p);
 //           // console.log(match.score.fullTime.home);
