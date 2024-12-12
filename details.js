@@ -41,6 +41,10 @@ let chartCircle;
 
 let myTable = document.querySelector("#myTable");
 let tableDiv = document.querySelector("#tableDiv");
+
+let thead = document.querySelector("#myTable thead");
+let tbody = document.querySelector("#myTable tbody");
+
 const headerHomePage = document.querySelector("#headerHomePage");
 const ctx = document.querySelector("#myChart");
 const canvasDiv = document.querySelector("#canvasDiv");
@@ -109,6 +113,7 @@ function showTeamMembers() {
 
         favouriteBtn.addEventListener("click", () => {
           sessionStorage.setItem("favouriteTeamId", result.id);
+          location.reload();
           // favouriteDiv.style.display = "block";
         });
         // Lägger till rubrik med lagets namn
@@ -131,7 +136,6 @@ function showTeamMembers() {
 function drawTable(table) {
   cleanChart();
 
-  let thead = document.querySelector("#myTable thead");
   let rowHead = document.createElement("tr");
   let thData = ["Position", "Namn", "Vinster", "Oavgjorda", "Förluster"];
 
@@ -152,11 +156,7 @@ function drawTable(table) {
     // teamLink.draw = object.draw;
     // teamLink.lost = object.lost;
 
-    let tbody = document.querySelector("#myTable tbody");
-    console.log(tbody);
-
     let row = document.createElement("tr");
-
     let rowData = [
       JSON.stringify(object.position),
       object.team.name,
@@ -167,11 +167,16 @@ function drawTable(table) {
 
     rowData.forEach((data, index) => {
       if (index === 1) {
+        // skapar celler med data om laget som ska in
+        // i tabellen.
         let cell = document.createElement("td");
         cell.classList.add("cellTeams");
+        // Jag vill att namnet på klubben ska gå att
+        // klicka sig vidare på så därför skapar jag
+        // ett länk-element när index är 1 i rowData.
         anchorCell = document.createElement("a");
-        anchorCell.classList.add("tableTeams");
         anchorCell.textContent = data;
+        anchorCell.classList.add("tableTeams");
         anchorCell.id = object.team.id;
         anchorCell.name = object.team.name;
         anchorCell.won = object.won;
@@ -180,14 +185,16 @@ function drawTable(table) {
 
         cell.appendChild(anchorCell);
         row.appendChild(cell);
-      } else {
+      }
+      // här skapar jag td element och lägger in data
+      // om varje lag som ska in i tabellen.
+      else {
         let cell = document.createElement("td");
         cell.textContent = data;
         row.appendChild(cell);
-        console.log(index);
       }
     });
-    // console.log(row.innerHTML);
+    // jag lägger in raden in i tablebody
     tbody.appendChild(row);
 
     // divElement = document.createElement("div");
@@ -310,8 +317,10 @@ function createAndAppendElements() {
 pShowTable.addEventListener("click", () => {
   tableheader.innerHTML = "";
   tablebody.innerHTML = "";
+
   tableDiv.innerHTML = "";
   ctx.style.display = "none";
+
   fetch(urlStandings, {
     headers: {
       "X-Auth-Token": apiKey,

@@ -7,7 +7,9 @@ let urlFromSessionStorage =
 
 console.log(sessionStorage.IsThisFirstTime_Log_From_LiveServer);
 
-let favouriteDiv = document.querySelector(".favouriteDiv");
+// let favouriteDiv = document.querySelector(".favouriteDiv");
+
+let asideElement = document.querySelector("#aside");
 
 if (sessionStorage.IsThisFirstTime_Log_From_LiveServer) {
   // favouriteDiv.style.display = "none";
@@ -24,8 +26,12 @@ function setFavTeam(url) {
   })
     .then((response) => response.json())
     .then((result) => {
+      let favouriteDiv = document.createElement("div");
+      favouriteDiv.classList.add("favouriteDiv");
+
       let favTeamLogo = document.createElement("img");
       favTeamLogo.setAttribute("src", result.crest);
+
       // favTeamLogo.style.backgroundColor = "white";
 
       let favTeamName = document.createElement("h2");
@@ -33,6 +39,11 @@ function setFavTeam(url) {
 
       favouriteDiv.appendChild(favTeamLogo);
       favouriteDiv.appendChild(favTeamName);
+      console.log(url);
+      console.log(url === "https://api.football-data.org/v4/teams/");
+      if (url !== "https://api.football-data.org/v4/teams/null;") {
+        asideElement.appendChild(favouriteDiv);
+      }
 
       if (sessionStorage.IsThisFirstTime_Log_From_LiveServer === true) {
         favouriteDiv.style.display = "none";

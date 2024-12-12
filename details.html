@@ -28,8 +28,12 @@
           src="favicon.png"
           alt="bild på hemknapp"
       /></a>
-      <div class="favouriteDiv"></div>
     </header>
+
+    <aside id="aside">
+      <div class="favouriteDiv"></div>
+    </aside>
+
     <nav id="navHomePage">
       <div id="divHome">
         <p class="pStyle" id="showTable">Visa tabell</p>
@@ -37,29 +41,40 @@
         <p class="pStyle" id="amountOfScores">Antal mål per lag i ligan</p>
       </div>
     </nav>
+    <main>
+      <table id="myTable" class="table-sm table-bordered table-striped">
+        <thead id="tableheader">
+          <!-- <tr> -->
+          <!-- <th>Position</th>
+        <th>Name</th>
+        <th>Won</th>
+        <th>Draw</th>
+        <th>Lost</th>-->
+          <!-- </tr> -->
+        </thead>
 
-    <table id="myTable" class="table-sm table-bordered table-striped">
-      <thead id="tableheader">
-        <!-- <tr> -->
-        <!-- <th>Position</th>
-          <th>Name</th>
-          <th>Won</th>
-          <th>Draw</th>
-          <th>Lost</th>-->
-        <!-- </tr> -->
-      </thead>
-      <tbody id="tablebody">
-        <!-- Rows will be added dynamically -->
-      </tbody>
-    </table>
+        <tbody id="tablebody">
+          <!-- <tr>
+            <td>position</td>
+            <td>namn</td>
+            <td>vinst</td>
+            <td>lika</td>
+            <td>förlust</td>
+          </tr>
+          -->
+        </tbody>
+      </table>
 
-    <div id="tableDiv">
-      <!-- <p></p> -->
-    </div>
+      <div id="tableDiv">
+        <!-- <p></p> -->
+      </div>
 
-    <div id="canvasDiv">
-      <canvas id="myChart"></canvas>
-    </div>
+      <div id="canvasDiv">
+        <canvas id="myChart"></canvas>
+      </div>
+    </main>
+
+    <footer><p>Made by Richard</p></footer>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- <script src="index.js"></script> -->

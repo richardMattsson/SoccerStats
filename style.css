@@ -20,11 +20,13 @@ a:hover {
 }
 #bodyHomePage {
   display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
   grid-template-areas:
-    "header"
-    "nav";
+    "header header aside"
+    "nav nav nav"
+    "main main main"
+    "footer footer footer";
   align-items: center;
   justify-items: center;
 
@@ -36,10 +38,14 @@ a:hover {
   /* justify-content: center; */
   /* align-items: center; */
   padding: 5px;
-  /* border: 1px solid black; */
+  border: 1px solid red;
   margin: 0;
-  width: 70vw;
+  width: 40vw;
   /* margin-top: 150px; */
+}
+aside {
+  grid-area: aside;
+  border: 1px solid blue;
 }
 #navHomePage {
   grid-area: nav;
@@ -47,10 +53,20 @@ a:hover {
   flex-wrap: wrap;
   justify-content: center;
 
-  /* border: 1px solid black; */
-  width: 90vw;
+  border: 1px solid green;
+  width: 40vw;
   padding: 10px;
   margin-bottom: 20px;
+}
+main {
+  grid-area: main;
+  border: 1px solid orange;
+}
+footer {
+  grid-area: footer;
+  border: 1px solid purple;
+}
+#myTable {
 }
 #h1Home {
   font-size: 40px;
@@ -71,14 +87,6 @@ a:hover {
   /* transform: rotate(45deg); */
   /* animation: spin 10s linear infinite; */
 }
-/* @keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-} */
 .flip-container {
   /* width: 150px;
   height: 150px; */
@@ -160,13 +168,11 @@ a:hover {
 .favouriteDiv {
   /* display: none; */
 }
-#myTable {
-}
-/* .tableTeams:hover {
-  background-color: aliceblue;
-} */
 .tableTeams {
   color: rgba(240, 248, 255, 0.723);
+}
+.tableTeams:hover {
+  color: black;
 }
 .cellTeams:hover {
   background-color: grey;
