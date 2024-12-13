@@ -2,16 +2,17 @@ let apiKey = "d5d8a211dbbd4ef5849cc74165a5be01";
 
 let urlTeams = `https://api.football-data.org/v4/teams`;
 
-let urlFromSessionStorage =
-  urlTeams + `/${sessionStorage.getItem("favouriteTeamId")};`;
+let urlFromLocalStorage =
+  urlTeams + `/${localStorage.getItem("favouriteTeamId")};`;
+console.log(urlFromLocalStorage);
 
-console.log(sessionStorage.IsThisFirstTime_Log_From_LiveServer);
+// console.log(localStorage.IsThisFirstTime_Log_From_LiveServer);
 
 // let favouriteDiv = document.querySelector(".favouriteDiv");
 
 let asideElement = document.querySelector("#aside");
 
-setFavTeam(urlFromSessionStorage);
+setFavTeam(urlFromLocalStorage);
 
 function setFavTeam(url) {
   fetch(url, {
@@ -36,15 +37,15 @@ function setFavTeam(url) {
 
       favouriteDiv.appendChild(favTeamLogo);
       favouriteDiv.appendChild(favTeamName);
-      console.log(url);
-      console.log(url === "https://api.football-data.org/v4/teams/");
+      // console.log(url);
+      // console.log(url === "https://api.football-data.org/v4/teams/");
       if (url !== "https://api.football-data.org/v4/teams/null;") {
         asideElement.appendChild(favouriteDiv);
       }
 
-      if (sessionStorage.IsThisFirstTime_Log_From_LiveServer === true) {
-        favouriteDiv.style.display = "none";
-        console.log("hej");
-      }
+      // if (sessionStorage.IsThisFirstTime_Log_From_LiveServer === true) {
+      //   favouriteDiv.style.display = "none";
+      //   console.log("hej");
+      // }
     });
 }

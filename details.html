@@ -23,7 +23,7 @@
     <section id="section">
       <a id="homeText" href="index.html"
         ><p>Hem</p>
-        <img id="homeImg" src="favicon.png" alt="bild på hemknapp"
+        <img id="homeButtonImg" src="favicon.png" alt="bild på hemknapp"
       /></a>
       <!-- <pre>
     Infotext om vad 
@@ -38,14 +38,20 @@
     </header>
 
     <aside id="aside">
-      <div class="favouriteDiv"></div>
+      <!-- <div class="favouriteDiv"></div> -->
     </aside>
 
     <nav id="navHomePage">
       <div id="divHome">
-        <p class="pStyle" id="showTable">Visa tabell</p>
-        <p class="pStyle" id="amountOfWins">Antal vinster per lag i ligan</p>
-        <p class="pStyle" id="amountOfScores">Antal mål per lag i ligan</p>
+        <button class="teamBtn btn btn-dark" ; id="showTable">
+          Visa tabell
+        </button>
+        <button class="teamBtn btn btn-dark" ; id="amountOfWins">
+          Antal vinster per lag
+        </button>
+        <button class="teamBtn btn btn-dark" ; id="amountOfScores">
+          Antal mål per lag
+        </button>
       </div>
     </nav>
     <main id="main">
@@ -74,12 +80,10 @@
           </tbody>
         </table>
 
-        <!-- <div id="tableDiv">
-          <p></p>
-        </div> -->
+        <!-- <div id="playerDiv"></div> -->
 
         <div id="canvasDiv">
-          <canvas id="myChart"></canvas>
+          <canvas id="canvasContext"></canvas>
         </div>
       </article>
     </main>

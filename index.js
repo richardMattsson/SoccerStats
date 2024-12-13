@@ -6,6 +6,7 @@ const serieAIndex = 7;
 const laLigaIndex = 11;
 
 apiKey = "d5d8a211dbbd4ef5849cc74165a5be01";
+
 let playerId = "";
 playerId = "7869";
 let urlCompetition = "https://api.football-data.org/v4/competitions";
@@ -14,9 +15,9 @@ let urlCompetition = "https://api.football-data.org/v4/competitions";
 let urlChampionsLeagueMatches =
   "https://api.football-data.org/v4/competitions/CL/matches";
 let urlTest = "https://api.football-data.org/v4/competitions/PL/matches";
-let urlPerson = "https://api.football-data.org/v4/persons/" + playerId;
+let urlPerson = "https://api.football-data.org/v4/persons/";
 function test() {
-  fetch(urlTest, {
+  fetch(urlPerson + "1795", {
     headers: {
       "X-Auth-Token": apiKey,
     },
@@ -27,14 +28,18 @@ function test() {
     });
 }
 test();
+
 // ============================================
+
 let homeParagraph = document.querySelector("#pHome");
+
 let leagueImg;
 let leagueImg2;
 let leagueLink;
 let leagueLink2;
 const divHome = document.querySelector("#divHome");
 
+const infoText = document.querySelector("#infoText");
 // Här skapar jag en funktion som skapar objektstrukturen nedan
 // istället för repeteringen nedan.
 function League(name, emblem, code) {
@@ -52,6 +57,7 @@ function getLigueImg() {
     .then((response) => response.json())
     .then((result) => {
       let teams = result.competitions;
+      console.log(teams);
 
       let premier = teams[premierLeagueIndex];
       let champions = teams[championsLeagueIndex];
@@ -77,7 +83,7 @@ function getLigueImg() {
       let ligue1 = new League(lig1.name, lig1.emblem, lig1.code);
 
       if (result.errorCode === 429) {
-        homeParagraph.textContent = `${result.message}...`;
+        infoText.textContent = `${result.message}...`;
         // jag skapar en bild som fetchas från ett annat api med
         // en random kattbild som visas medans man väntar med
         // ett felmeddelande som säger att man behöver vänta
@@ -110,13 +116,13 @@ function setLigueImg(league) {
   );
   // skapar bild på respektive ligas loga
   leagueImg = document.createElement("img");
-  leagueImg.classList.add("imgHome");
+  leagueImg.classList.add("imgLeagueHome");
   leagueImg.setAttribute("src", league.img);
   leagueImg.setAttribute("alt", `Bild på ${league.name}s emblem`);
   leagueImg.style.backgroundColor = "white";
 
   leagueImg2 = document.createElement("img");
-  leagueImg2.classList.add("imgHome");
+  leagueImg2.classList.add("imgLeagueHome");
   leagueImg2.setAttribute("src", league.img);
   leagueImg2.setAttribute("alt", `Bild på ${league.name}s emblem`);
   leagueImg2.style.backgroundColor = "white";
