@@ -91,7 +91,10 @@ fetch(urlMatches, {
       (match) => match.matchday === minMatch
     );
     nextMatches.forEach((game) => {
+      let date = game.utcDate;
+      let formattedDate = date.replace("T", " ").replace(":00Z", "");
       matchesArray.push({
+        date: formattedDate,
         matchday: game.matchday,
         homeTeam: game.homeTeam.name,
         awayTeam: game.awayTeam.name,
@@ -445,7 +448,7 @@ showMatches.addEventListener("click", () => {
   setTitle(`Matchdag: ${matchesArray[0].matchday}`);
 
   let rowHead = document.createElement("tr");
-  let thData = ["Hemmalag", "Bortalag"];
+  let thData = ["Hemmalag", "Datum", "Bortalag"];
 
   thData.forEach((data) => {
     let cell = document.createElement("th");
@@ -456,7 +459,7 @@ showMatches.addEventListener("click", () => {
 
   matchesArray.forEach((match) => {
     let row = document.createElement("tr");
-    let rowData = [match.homeTeam, match.awayTeam];
+    let rowData = [match.homeTeam, match.date, match.awayTeam];
 
     rowData.forEach((data) => {
       let cell = document.createElement("td");
