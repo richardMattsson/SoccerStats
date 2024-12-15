@@ -1,31 +1,16 @@
-// const apiKey = "d5d8a211dbbd4ef5849cc74165a5be01";
-let testUrl = "https://api.football-data.org/v4/competitions/PD/standings";
-function test(url) {
-  fetch(url, {
-    headers: {
-      "X-Auth-Token": apiKey,
-    },
-  })
-    .then((response) => response.json())
-    .then((result) => {
-      console.log(result);
-    });
-}
-
+// Jag hämtar informationen från länkarna från startsidan
+// där information om den valda ligans id, namn och logga skickas med.
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const league = urlParams.get("league");
 const id = urlParams.get("id");
 const emblem = urlParams.get("emblem");
-console.log(id);
-
 document.querySelector("#h1Home").innerHTML = league;
 document.querySelector("#imgLeagueLogo").src = emblem;
 
 let urlStandings = `https://api.football-data.org/v4/competitions/${id}/standings`;
 let backUpStanding = `https://api.football-data.org/v4/competitions/${id}/standings`;
-
-// let urlTeams = `https://api.football-data.org/v4/teams`;
+let urlMatches = `https://api.football-data.org/v4/competitions/${id}/matches`;
 let backUpUrlTeams = `https://api.football-data.org/v4/teams`;
 
 // De här arrayerna är till för data till chart.
@@ -33,25 +18,12 @@ let teamNames = [];
 let numberOfWins = [];
 let numberOfGoals = [];
 
-fetch(urlStandings, {
-  headers: {
-    "X-Auth-Token": apiKey,
-  },
-})
-  .then((response) => response.json())
-  .then((result) => {
-    leagueTable = result.standings[0].table;
-
-    leagueTable.forEach((object) => {
-      teamNames.push(object.team.name);
-      numberOfGoals.push(object.goalsFor);
-      numberOfWins.push(object.won);
-    });
-    // console.log(teamNames, numberOfGoals, numberOfWins);
-  });
-
-let anchorCell;
+let matches = {};
+let matchesArray = [];
+let teamName;
+let playerName;
 let leagueTable;
+let leagueInfo;
 let teamLink;
 let chartTitle = "";
 let chart;
@@ -59,7 +31,6 @@ let chartCircle;
 
 let myTable = document.querySelector("#myTable");
 let tableHeader = document.querySelector("#tableheader");
-// let tableDiv = document.querySelector("#tableDiv");
 let main = document.querySelector("#main");
 let figureArticle = document.querySelector("#figureArticle");
 
@@ -72,27 +43,69 @@ const canvasDiv = document.querySelector("#canvasDiv");
 let showAmountWins = document.querySelector("#amountOfWins");
 let amountOfScores = document.querySelector("#amountOfScores");
 let pShowTable = document.querySelector("#showTable");
+let showMatches = document.querySelector("#showMatches");
 
 let divElement = document.createElement("div");
 let paragraphElement = document.createElement("p");
-// const canvas = document.createElement("canvas");
 const chartBtn = document.createElement("button");
-// let playerDiv = document.querySelector("#playerDiv");
-// playerDiv.classList.add("playerDiv");
+
+// Denna fetch körs direkt när sidan öppnas och ropar på
+// funktionen drawtable för att rita upp tabellen.
+fetch(urlStandings, {
+  headers: {
+    "X-Auth-Token": apiKey,
+  },
+})
+  .then((response) => response.json())
+  .then((result) => {
+    console.log(result.errorCode);
+    leagueInfo = result.standings[0].table;
+    drawTable(leagueInfo);
+
+    leagueInfo.forEach((object) => {
+      teamNames.push(object.team.name);
+      numberOfGoals.push(object.goalsFor);
+      numberOfWins.push(object.won);
+    });
+  });
+
+// fetchar kommande matcher från ligan
+fetch(urlMatches, {
+  headers: {
+    "X-Auth-Token": apiKey,
+  },
+})
+  .then((response) => response.json())
+  .then((result) => {
+    let games = result.matches;
+    let arrayOfUpComingMatches = [];
+    games.forEach((game) => {
+      if (game.status === "TIMED") {
+        arrayOfUpComingMatches.push(game);
+      }
+    });
+    let minMatch = Math.min(
+      ...arrayOfUpComingMatches.map((match) => match.matchday)
+    );
+    let nextMatches = arrayOfUpComingMatches.filter(
+      (match) => match.matchday === minMatch
+    );
+    nextMatches.forEach((game) => {
+      matchesArray.push({
+        matchday: game.matchday,
+        homeTeam: game.homeTeam.name,
+        awayTeam: game.awayTeam.name,
+      });
+    });
+  });
 
 function showTeamMembers() {
   urlTeams = backUpUrlTeams;
 
-  anchorCell.addEventListener("click", (event) => {
-    // if (playerDiv) {
-    //   playerDiv.innerHTML = "";
-    // }
-    thead.innerHTML = "";
-    tbody.innerHTML = "";
+  teamName.addEventListener("click", (event) => {
+    // Förbereder tabellen genom att ta bort tidigare tabeller.
+    emptyTableAndChart();
     urlTeams += `/${event.target.id}`;
-
-    console.log(event.target.id);
-    console.log(urlTeams);
 
     fetch(urlTeams, {
       headers: {
@@ -102,10 +115,7 @@ function showTeamMembers() {
       .then((response) => response.json())
       .then((result) => {
         // Lägger till rubrik med lagets namn
-        let teamHeader = document.createElement("h2");
-        teamHeader.innerHTML = `${result.name}`;
-        teamHeader.style.textAlign = "center";
-        figureArticle.appendChild(teamHeader);
+        setTitle(result.name);
         // Lagets flagga / logo
         let teamLogo = document.createElement("img");
         teamLogo.setAttribute("src", result.crest);
@@ -142,17 +152,11 @@ function showTeamMembers() {
 
         // Lyssnar efter klick som skapar cirkel-diagram.
         drawChartBtn.addEventListener("click", () => {
-          // if (playerDiv) {
-          //   playerDiv.innerHTML = "";
-          // }
-          thead.innerHTML = "";
-          tbody.innerHTML = "";
-
-          // canvasDiv.style.height = "60vh";
-          // canvasDiv.style.width = "900px";
-          // canvasDiv.style.height = "400px";
-
+          // Förebereder diagrammet genom att ta bort tidigare tabeller
+          // och rensa canvas för att rita upp nytt diagram.
+          emptyTableAndChart();
           prepareChartContext();
+
           drawChartCircle(
             event.target.name,
             labelsCircleChart,
@@ -160,14 +164,11 @@ function showTeamMembers() {
           );
         });
 
-        // Här lägger jag till en eventlistener som lyssnar efter klick på knappen.
-        // Om knappen trycks på sparas laget undan i local storage vilket gör att
-        // sidan minns till nästa gång vilket favoritlag användaren har.
-
+        // Denna lyssnare sparar undan favoritlaget i localstorage
+        // och laddar samtidigt om sidan för att uppdatera lagets flagga på sidan.
         favouriteBtn.addEventListener("click", () => {
           localStorage.setItem("favouriteTeamId", result.id);
           location.reload();
-          // favouriteDiv.style.display = "block";
         });
 
         // Lägger till lagets tränares namn
@@ -175,47 +176,40 @@ function showTeamMembers() {
         coach.innerHTML = `Coach: <strong>${result.coach.name}</strong>`;
         coach.classList.add("coachName");
         figureArticle.appendChild(coach);
-        // Går igenom alla spelare och skriver ut i listan
 
         // Här skapar jag tableheader för tabellens struktur
         let rowHead = document.createElement("tr");
         let thData = ["Position", "Namn"];
 
         thData.forEach((data) => {
-          let cell = document.createElement("td");
+          let cell = document.createElement("th");
           cell.textContent = data;
           rowHead.appendChild(cell);
         });
 
         thead.appendChild(rowHead);
-        console.log(result.squad);
+
         result.squad.forEach((player) => {
           // här lägger jag till data om varje spelare i tabellen
           // let playerId = player.id;
-          let playerLink;
 
           let row = document.createElement("tr");
           let rowData = [player.position, player.name];
           rowData.forEach((data, index) => {
-            // här skapar jag td element och lägger in info
+            // här lägger jag in inforamtion
             // om varje spelare som ska in i tabellen.
+            // På första index med spelarens namn
+            // lägger jag till attribut som används för
+            // senare fetch om spelarna.
             if (index === 1) {
-              let cell = document.createElement("td");
-              cell.classList.add("cellteams");
-
-              playerLink = document.createElement("a");
-              playerLink.textContent = data;
-              // playerLink.setAttribute(
-              //   "href",
-              //   `details.html?id=${player.id}&name=${player.name}`
-              // );
-              playerLink.classList.add("tableTeams");
-              playerLink.id = player.id;
-              playerLink.name = player.name;
-              playerLink.position = player.position;
-
-              cell.appendChild(playerLink);
-              row.appendChild(cell);
+              playerName = document.createElement("td");
+              playerName.classList.add("cellTeams");
+              playerName.textContent = data;
+              playerName.classList.add("tableTeams");
+              playerName.id = player.id;
+              playerName.name = player.name;
+              playerName.position = player.position;
+              row.appendChild(playerName);
             } else {
               let cell = document.createElement("td");
               cell.textContent = data;
@@ -225,31 +219,20 @@ function showTeamMembers() {
           // jag lägger in raden in i tablebody
           tbody.appendChild(row);
 
-          playerLink.addEventListener("click", (event) => {
-            console.log(event.target.id);
+          // jag lägger in i lyssnare efter klick på spelaren
+          // och visar ytterligare information.
+          playerName.addEventListener("click", (event) => {
             thead.innerHTML = "";
             tbody.innerHTML = "";
             figureArticle.innerHTML = "";
-            // playerDiv.style.height = "70vh";
-            fetchPlayer(event.target.id);
-            console.log(event.target.id);
-            // createAndAppendElements();
-            // paragraphElement.innerHTML = `${player.position}: <strong>${player.name}</strong>.`;
+            // jag anropar funktion och skickar med eventet för info om spelarens id.
+            playerInfo(event.target.id);
           });
-          // playerLink.addEventListener("click", (event) => {
-          //   fetchPlayer(event.target.id)
-          // })
         });
       });
   });
 }
-
-// const queryString2 = window.location.search;
-// const urlParams2 = new URLSearchParams(queryString);
-// const playerid = urlParams.get("id");
-// console.log(playerid);
-
-function fetchPlayer(id) {
+function playerInfo(id) {
   fetch("https://api.football-data.org/v4/persons/" + id, {
     headers: {
       "X-Auth-Token": apiKey,
@@ -257,6 +240,7 @@ function fetchPlayer(id) {
   })
     .then((response) => response.json())
     .then((result) => {
+      // skapar en liten tabell med info om spelaren.
       let rowHead = document.createElement("tr");
       let thData = ["Namn", "Nummer", "Position", "Född", "Nationalitet"];
 
@@ -283,32 +267,9 @@ function fetchPlayer(id) {
         row.appendChild(cell);
       });
       tbody.appendChild(row);
-
-      console.log(result.currentTeam.area.flag);
-      console.log(result);
-
-      // let name = document.createElement("h1");
-      // let number = document.createElement("p");
-      // let born = document.createElement("p");
-      // let nationality = document.createElement("p");
-      // let position = document.createElement("p");
-      // name.innerText = result.name;
-      // number.innerText = "Number: " + result.shirtNumber;
-      // born.innerText = "Born: " + result.dateOfBirth;
-      // nationality.innerText = "Nationality: " + result.nationality;
-      // position.innerText = "Position: " + result.position;
-      // playerDiv.appendChild(name);
-      // playerDiv.appendChild(number);
-      // playerDiv.appendChild(position);
-      // playerDiv.appendChild(born);
-      // playerDiv.appendChild(nationality);
-      // myTable.appendChild(playerDiv);
     });
 }
-
 function drawTable(table) {
-  // prepareChartContext();
-
   let rowHead = document.createElement("tr");
   let thData = [
     "Position",
@@ -330,14 +291,7 @@ function drawTable(table) {
   thead.appendChild(rowHead);
 
   table.forEach((object) => {
-    // teamLink = document.createElement("a");
-    // teamLink.innerHTML = `${object.position} | ${object.team.name} | Vinster: ${object.won} | Oavgjorda: ${object.draw} | Förluster: ${object.lost}`;
-    // teamLink.id = `${object.team.id}`;
-    // teamLink.name = object.team.name;
-    // teamLink.won = object.won;
-    // teamLink.draw = object.draw;
-    // teamLink.lost = object.lost;
-
+    // skapar en tabell över ligan med lite statistik.
     let row = document.createElement("tr");
     let rowData = [
       object.position,
@@ -352,59 +306,34 @@ function drawTable(table) {
 
     rowData.forEach((data, index) => {
       if (index === 1) {
-        // skapar celler med data om laget som ska in
-        // i tabellen.
-        let cell = document.createElement("td");
-        cell.classList.add("cellTeams");
-        // Jag vill att namnet på klubben ska gå att
-        // klicka sig vidare på så därför skapar jag
-        // ett länk-element när index är 1 i rowData.
-        anchorCell = document.createElement("a");
-        anchorCell.textContent = data;
-        anchorCell.classList.add("tableTeams");
-        anchorCell.id = object.team.id;
-        anchorCell.name = object.team.name;
-        anchorCell.won = object.won;
-        anchorCell.draw = object.draw;
-        anchorCell.lost = object.lost;
+        // skapar celler med data om laget som ska in i tabellen.
+        // Det ska gå att klicka på lagnamnet för att få mer info.
+        // jag skickar därför med attribut i lagnamnet till nästa fetch.
+        teamName = document.createElement("td");
+        teamName.classList.add("cellTeams");
+        teamName.classList.add("tableTeams");
+        teamName.textContent = data;
+        teamName.id = object.team.id;
+        teamName.name = object.team.name;
+        teamName.won = object.won;
+        teamName.draw = object.draw;
+        teamName.lost = object.lost;
 
-        cell.appendChild(anchorCell);
-        row.appendChild(cell);
+        row.appendChild(teamName);
       }
-      // här skapar jag td element och lägger in data
-      // om varje lag som ska in i tabellen.
+      // på resterande index lägger jag in endast datan.
       else {
         let cell = document.createElement("td");
         cell.textContent = data;
         row.appendChild(cell);
       }
     });
-    // jag lägger in raden in i tbody
+    // jag lägger in samtliga rader i tablebody
     tbody.appendChild(row);
-
-    // divElement = document.createElement("div");
-    // divElement.classList.add("tableDiv");
-
-    // divElement.appendChild(teamLink);
-    // tableDiv.appendChild(divElement);
-
+    // ropar på funktionen showTeamMembers
     showTeamMembers();
   });
 }
-
-// canvasDiv.style.height = "0vh";
-// canvasContext.style.height = "0vh";
-
-fetch(urlStandings, {
-  headers: {
-    "X-Auth-Token": apiKey,
-  },
-})
-  .then((response) => response.json())
-  .then((result) => {
-    drawTable(result.standings[0].table);
-  });
-
 function drawChart(chartTitle, labels, data) {
   Chart.defaults.elements.bar.borderWidth = 2;
   chart = new Chart(canvasContext, {
@@ -446,7 +375,6 @@ function drawChart(chartTitle, labels, data) {
       },
     },
   });
-  // console.log(chart);
 }
 function drawChartCircle(chartTitle, labels, data) {
   // canvasContext.style.width = "40vw";
@@ -477,10 +405,16 @@ function drawChartCircle(chartTitle, labels, data) {
     },
   });
 }
+// Nedan funktion ritar upp en titel.
+function setTitle(name) {
+  let title = document.createElement("h2");
+  title.innerHTML = name;
+  title.style.textAlign = "center";
+  figureArticle.appendChild(title);
+}
+// Nedan funktion förbereder chart genom att visa canvas div
+// och ta bort tidigare chart på sidan.
 function prepareChartContext() {
-  // tableDiv.innerHTML = "";
-  // thead.innerHTML = "";
-  // tbody.innerHTML = "";
   canvasContext.style.display = "block";
 
   if (chart) {
@@ -490,180 +424,65 @@ function prepareChartContext() {
     chartCircle.destroy();
   }
 }
+// Nedan funktion tömmer tidigare tabeller och döljer eventuell chart.
 function emptyTableAndChart() {
-  // tableDiv.innerHTML = "";
+  figureArticle.innerHTML = "";
   thead.innerHTML = "";
   tbody.innerHTML = "";
-  // myTable.appendChild(chartBtn);
   canvasContext.style.display = "none";
-  // chartBtn.textContent = "Draw chart";
-
-  if (teamNames.length > 0) {
-    numberOfGoals = [];
-    numberOfWins = [];
-    teamNames = [];
-  }
 }
-// function createAndAppendElements() {
-//   divElement = document.createElement("div");
-//   paragraphElement = document.createElement("p");
-//   divElement.style.border = "1px solid black";
-
-//   divElement.appendChild(paragraphElement);
-//   myTable.appendChild(divElement);
-// }
 
 pShowTable.addEventListener("click", () => {
-  figureArticle.innerHTML = "";
-  thead.innerHTML = "";
-  tbody.innerHTML = "";
-  canvasContext.style.display = "none";
-  // canvasDiv.style.height = "0px";
-  // if (playerDiv) {
-  //   playerDiv.innerHTML = "";
-  // }
-
-  fetch(urlStandings, {
-    headers: {
-      "X-Auth-Token": apiKey,
-    },
-  })
-    .then((response) => response.json())
-    .then((result) => {
-      // console.log(result.standings[0].table);
-      drawTable(result.standings[0].table);
-    });
+  // rensar tidigare tabeller och chart samt
+  // ropar på funktionen som ritar upp tabellen.
+  emptyTableAndChart();
+  drawTable(leagueInfo);
 });
+showMatches.addEventListener("click", () => {
+  // Tömmer tidigare tabeller och chart samt
+  // förbereder canvas så den är töm för ny chart
+  emptyTableAndChart();
+  setTitle(`Matchdag: ${matchesArray[0].matchday}`);
 
+  let rowHead = document.createElement("tr");
+  let thData = ["Hemmalag", "Bortalag"];
+
+  thData.forEach((data) => {
+    let cell = document.createElement("th");
+    cell.textContent = data;
+    rowHead.appendChild(cell);
+  });
+  thead.appendChild(rowHead);
+
+  matchesArray.forEach((match) => {
+    let row = document.createElement("tr");
+    let rowData = [match.homeTeam, match.awayTeam];
+
+    rowData.forEach((data) => {
+      let cell = document.createElement("td");
+      cell.textContent = data;
+      row.appendChild(cell);
+    });
+    tbody.appendChild(row);
+  });
+});
 showAmountWins.addEventListener("click", () => {
-  // emptyTableAndChart();
-  // if (playerDiv) {
-  //   playerDiv.innerHTML = "";
-  //   playerDiv.style.height = "0vh";
-  // }
-
-  figureArticle.innerHTML = "";
-  thead.innerHTML = "";
-  tbody.innerHTML = "";
-  // playerDiv.style.height = "0px";
-
-  // emptyTableAndChart();
-
-  if (chart) {
-    chart.destroy();
-  }
-  if (chartCircle) {
-    chartCircle.destroy();
-    // canvasContext.style.width = "";
-  }
-
-  // canvasDiv.style.height = "600px";
-  // canvasDiv.style.width = "900px";
-  // canvasContext.style.height = "600px";
-  // canvasContext.style.width = "900px";
-
-  // if (teamNames.length > 0) {
-  //   numberOfGoals = [];
-  //   numberOfWins = [];
-  //   teamNames = [];
-  // }
-  // chartBtn.textContent = "Draw chart";
-  // chartBtn.classList.add("teamBtn", "btn", "btn-dark");
-  // figureArticle.appendChild(chartBtn);
-
-  // fetch(urlStandings, {
-  //   headers: {
-  //     "X-Auth-Token": apiKey,
-  //   },
-  // })
-  //   .then((response) => response.json())
-  //   .then((result) => {
-  //     leagueTable = result.standings[0].table;
-
-  // Här skapar jag tableheader för antal vinster i ligan
-  // let rowHead = document.createElement("tr");
-  // let thData = ["Namn", "Vinster"];
-
-  // thData.forEach((data) => {
-  //   let cell = document.createElement("td");
-  //   cell.textContent = data;
-  //   rowHead.appendChild(cell);
-  // });
-
-  // thead.appendChild(rowHead);
-
-  // leagueTable.forEach((object) => {
-  //   teamNames.push(object.team.name);
-  //   numberOfWins.push(object.won);
-
-  // här lägger jag till data om varje lag i tabellen
-  // let row = document.createElement("tr");
-  // let rowData = [object.team.name, object.won];
-  // rowData.forEach((data) => {
-  // här skapar jag td element och lägger in data
-  // om varje lag som ska in i tabellen.
-  //   let cell = document.createElement("td");
-  //   cell.textContent = data;
-  //   row.appendChild(cell);
-  // });
-  // jag lägger in raden in i tablebody
-  // tbody.appendChild(row);
-
+  // Tömmer tidigare tabeller och chart samt
+  // förbereder canvas så den är töm för ny chart
+  emptyTableAndChart();
   prepareChartContext();
+
+  // Anropar funtion som ritar upp diagram och skickar med data.
   chartTitle = "Antal vinster per lag.";
   drawChart(chartTitle, teamNames, numberOfWins);
-  // chartBtn.addEventListener("click", () => {
-
-  // });
-  // });
 });
-
 amountOfScores.addEventListener("click", () => {
-  // emptyTableAndChart();
-  // if (playerDiv) {
-  //   playerDiv.innerHTML = "";
-  //   playerDiv.style.height = "0vh";
-  // }
-  figureArticle.innerHTML = "";
-  thead.innerHTML = "";
-  tbody.innerHTML = "";
-  // playerDiv.style.height = "0vh";
-
-  if (chart) {
-    chart.destroy();
-  }
-  if (chartCircle) {
-    chartCircle.destroy();
-    // canvasContext.style.width = "";
-  }
-
-  // canvasDiv.style.height = "60vh";
-  // canvasDiv.style.width = "80vw";
-
-  // canvasContext.style.height = "60vh";
-  // canvasContext.style.width = "80vw";
-
-  // fetch(urlStandings, {
-  //   headers: {
-  //     "X-Auth-Token": apiKey,
-  //   },
-  // })
-  //   .then((response) => response.json())
-  //   .then((result) => {
-  //     leagueTable = result.standings[0].table;
-
-  //     leagueTable.forEach((object) => {
-  //       teamNames.push(object.team.name);
-  //       numberOfGoals.push(object.goalsFor);
-  //       numberOfWins.push(object.won);
-  // createAndAppendElements();
-  // paragraphElement.innerHTML = `${object.team.name}. Antal gjorda mål: ${object.goalsFor}. `;
-  // });
+  // Tömmer tidigare tabeller och chart samt
+  // förbereder canvas så den är töm för ny chart
+  emptyTableAndChart();
   prepareChartContext();
+
+  // Anropar funtion som ritar upp diagram och skickar med data.
   chartTitle = "Antal mål";
   drawChart(chartTitle, teamNames, numberOfGoals);
-  // chartBtn.addEventListener("click", () => {
-
-  // });
-  // });
 });
