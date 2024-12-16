@@ -12,11 +12,6 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
-    <!-- ikoner bootstrap -->
-    <!-- <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-    /> -->
     <link rel="stylesheet" href="style.css" />
   </head>
   <body id="bodyHomePage" class="bg-dark text-light">
@@ -24,13 +19,10 @@
       <a id="homeText" href="index.html"
         ><p>Hem</p><img id="homeButtonImg" src="favicon.png" alt="bild på hemknapp"
       /></a>
-      
     </section>
     <header id="headerHomePage">
-      <h1 id="h1Home">Fotbollssidan</h1>
-      <p id="pHome">Välj en liga</p>
-
-      <!-- <div class="favouriteDiv"></div> -->
+      <h1 id="headerTitle">Fotbollssidan</h1>
+      <p id="subHeader">Välj en liga</p>
     </header>
 
     <aside id="aside">
@@ -39,80 +31,21 @@
 
     <nav id="navHomePage">
       <pre id="infoText">
-        
       På denna webbplats kan du kolla in de sex största forbollsligorna i Europa.
       Klicka vidare och välj ditt favoritlag, se tabeller och statistik.
+      Det behövs ett tillägg för att din webbläsaren ska kunna hämta informationen
+      från webbplatsen. CORS Everywhere. 
+
       </pre>
-        <!-- <div> -->
-        <!-- <a
-          id="premierLeague"
-          class="aHome"
-          href="details.html?league=Premier League&id=PL"
-        >
-          <img
-            class="imgHome"
-            src="Images/logo_premier_league.png"
-            alt="premier league log"
-          />
-        </a>
-
-        <a class="aHome" href="details.html?league=Champions League&id=CL">
-          <img
-            class="imgHome"
-            src="Images/logo_cl.png"
-            alt="champions league
-          log"
-        />
-        </a>
-
-        <a class="aHome" href="details.html?league=Bundesliga&id=BL1">
-          <img
-            class="imgHome"
-            src="Images/logo_bundesliga.png"
-            alt="bundesliga
-          logo"
-        />
-        </a>
-
-        <a class="aHome" href="details.html?league=Serie A&id=SA">
-          <img
-            class="imgHome"
-            src="Images/logo_serie_a.png"
-            alt="serie A logo"
-        />
-        </a>
-
-        <a class="aHome" href="details.html?league=La liga&id=PD">
-          <img class="imgHome" src="Images/logo_laliga.png" alt="la liga logo"
-        />
-        </a>
-
-        <a class="aHome" href="details.html?league=Ligue 1&id=FL1">
-          <img
-            class="imgHome"
-            src="Images/logo_ligue_1.png"
-            alt="ligue 1 logo"
-        />
-        </a> -->
-        <!-- </div> -->
-      </div>
+       
     </nav>
     <main>
       <div id="divHome" class="flip-container">
     </main>
-    <!-- [x] Skapa 2 html sidor, en hemsida och en sida dit användaren kan klicka in sig på. 
-         [] Använd Web Storage så användaren kan spara in något som är kvar även om sidan stängs.
-         [x] Använd Chart.js på ett sätt så det finns möjlighet att visualisera data från webbtjänsten.
-         [] ha en inloggningsfunktion på startsidan?
-         [x] Sätt loggor på ligorna istället för text.
-        [x]  Cities-tjänsten. Bygg funktionalitet för att visa, 
-            lägga till, redigera, och ta bort städer från Cities-tjänsten. 
-            Webbsidan ska drivas med (minst) ett webbformulär. alert eller 
-            prompt ska alltså inte användas. 
-    -->
+
     <footer><p>Made by Richard | Thanks to football-data.org and Daniel who made this
-      API possible to use.</p></footer>
-    <!-- <script src="details.js"></script> -->
+      API possible to use.</p>
+    </footer>
     <script src="helpers.js"></script>
     <script src="index.js"></script>
   </body>

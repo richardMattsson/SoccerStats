@@ -5,7 +5,7 @@ const urlParams = new URLSearchParams(queryString);
 const league = urlParams.get("league");
 const id = urlParams.get("id");
 const emblem = urlParams.get("emblem");
-document.querySelector("#h1Home").innerHTML = league;
+document.querySelector("#headerTitle").innerHTML = league;
 document.querySelector("#imgLeagueLogo").src = emblem;
 
 let urlStandings = `https://api.football-data.org/v4/competitions/${id}/standings`;
@@ -29,25 +29,21 @@ let chartTitle = "";
 let chart;
 let chartCircle;
 
-let myTable = document.querySelector("#myTable");
-let tableHeader = document.querySelector("#tableheader");
-let main = document.querySelector("#main");
-let figureArticle = document.querySelector("#figureArticle");
+const table = document.querySelector("#table");
+const tableHeader = document.querySelector("#tableheader");
+const main = document.querySelector("#main");
+const figureArticle = document.querySelector("#figureArticle");
 
-let thead = document.querySelector("#myTable thead");
-let tbody = document.querySelector("#myTable tbody");
+const thead = document.querySelector("#table thead");
+const tbody = document.querySelector("#table tbody");
 
 const headerHomePage = document.querySelector("#headerHomePage");
 const canvasContext = document.querySelector("#canvasContext");
 const canvasDiv = document.querySelector("#canvasDiv");
-let showAmountWins = document.querySelector("#amountOfWins");
-let amountOfScores = document.querySelector("#amountOfScores");
-let pShowTable = document.querySelector("#showTable");
-let showMatches = document.querySelector("#showMatches");
-
-let divElement = document.createElement("div");
-let paragraphElement = document.createElement("p");
-const chartBtn = document.createElement("button");
+const showAmountWins = document.querySelector("#amountOfWins");
+const amountOfScores = document.querySelector("#amountOfScores");
+const pShowTable = document.querySelector("#showTable");
+const showMatches = document.querySelector("#showMatches");
 
 // Denna fetch körs direkt när sidan öppnas och ropar på
 // funktionen drawtable för att rita upp tabellen.
@@ -77,22 +73,22 @@ fetch(urlMatches, {
 })
   .then((response) => response.json())
   .then((result) => {
-    let games = result.matches;
+    const games = result.matches;
     let arrayOfUpComingMatches = [];
     games.forEach((game) => {
       if (game.status === "TIMED") {
         arrayOfUpComingMatches.push(game);
       }
     });
-    let minMatch = Math.min(
+    const minMatch = Math.min(
       ...arrayOfUpComingMatches.map((match) => match.matchday)
     );
-    let nextMatches = arrayOfUpComingMatches.filter(
+    const nextMatches = arrayOfUpComingMatches.filter(
       (match) => match.matchday === minMatch
     );
     nextMatches.forEach((game) => {
-      let date = game.utcDate;
-      let formattedDate = date.replace("T", " ").replace(":00Z", "");
+      const date = game.utcDate;
+      const formattedDate = date.replace("T", " ").replace(":00Z", "");
       matchesArray.push({
         date: formattedDate,
         matchday: game.matchday,
@@ -120,34 +116,34 @@ function showTeamMembers() {
         // Lägger till rubrik med lagets namn
         setTitle(result.name);
         // Lagets flagga / logo
-        let teamLogo = document.createElement("img");
+        const teamLogo = document.createElement("img");
         teamLogo.setAttribute("src", result.crest);
         teamLogo.classList.add("favTeamLogo");
         figureArticle.appendChild(teamLogo);
 
         // Knapp rita diagram
-        let drawChartBtn = document.createElement("button");
+        const drawChartBtn = document.createElement("button");
         drawChartBtn.textContent = "Rita diagram";
         drawChartBtn.classList.add("teamBtn", "btn", "btn-dark");
         // figureArticle.appendChild(drawChartBtn);
 
         // Knapp lägga till favoritlag
-        let favouriteBtn = document.createElement("button");
+        const favouriteBtn = document.createElement("button");
         favouriteBtn.textContent = "Spara som mitt lag";
         favouriteBtn.classList.add("teamBtn", "btn", "btn-dark");
         //  figureArticle.appendChild(favouriteBtn);
 
         // Lägger in knapparna i en div för att
         // kunna placeras som jag vill.
-        let divButtons = document.createElement("div");
+        const divButtons = document.createElement("div");
         divButtons.appendChild(drawChartBtn);
         divButtons.appendChild(favouriteBtn);
         divButtons.classList.add("divButtons");
         figureArticle.appendChild(divButtons);
 
         // Skapar info som ska in i cirkeldiagrammet.
-        let labelsCircleChart = ["Vinster", "Oavgjorda", "Förluster"];
-        let dataCircleChart = [
+        const labelsCircleChart = ["Vinster", "Oavgjorda", "Förluster"];
+        const dataCircleChart = [
           event.target.won,
           event.target.draw,
           event.target.lost,
@@ -175,17 +171,17 @@ function showTeamMembers() {
         });
 
         // Lägger till lagets tränares namn
-        let coach = document.createElement("p");
+        const coach = document.createElement("p");
         coach.innerHTML = `Coach: <strong>${result.coach.name}</strong>`;
         coach.classList.add("coachName");
         figureArticle.appendChild(coach);
 
         // Här skapar jag tableheader för tabellens struktur
-        let rowHead = document.createElement("tr");
-        let thData = ["Position", "Namn"];
+        const rowHead = document.createElement("tr");
+        const thData = ["Position", "Namn"];
 
         thData.forEach((data) => {
-          let cell = document.createElement("th");
+          const cell = document.createElement("th");
           cell.textContent = data;
           rowHead.appendChild(cell);
         });
@@ -194,10 +190,8 @@ function showTeamMembers() {
 
         result.squad.forEach((player) => {
           // här lägger jag till data om varje spelare i tabellen
-          // let playerId = player.id;
-
-          let row = document.createElement("tr");
-          let rowData = [player.position, player.name];
+          const row = document.createElement("tr");
+          const rowData = [player.position, player.name];
           rowData.forEach((data, index) => {
             // här lägger jag in inforamtion
             // om varje spelare som ska in i tabellen.
@@ -214,14 +208,13 @@ function showTeamMembers() {
               playerName.position = player.position;
               row.appendChild(playerName);
             } else {
-              let cell = document.createElement("td");
+              const cell = document.createElement("td");
               cell.textContent = data;
               row.appendChild(cell);
             }
           });
           // jag lägger in raden in i tablebody
           tbody.appendChild(row);
-
           // jag lägger in i lyssnare efter klick på spelaren
           // och visar ytterligare information.
           playerName.addEventListener("click", (event) => {
@@ -244,19 +237,19 @@ function playerInfo(id) {
     .then((response) => response.json())
     .then((result) => {
       // skapar en liten tabell med info om spelaren.
-      let rowHead = document.createElement("tr");
-      let thData = ["Namn", "Nummer", "Position", "Född", "Nationalitet"];
+      const rowHead = document.createElement("tr");
+      const thData = ["Namn", "Tröjnummer", "Position", "Född", "Nationalitet"];
 
       thData.forEach((data) => {
-        let cell = document.createElement("th");
+        const cell = document.createElement("th");
         cell.textContent = data;
         rowHead.appendChild(cell);
       });
 
       thead.appendChild(rowHead);
 
-      let row = document.createElement("tr");
-      let rowData = [
+      const row = document.createElement("tr");
+      const rowData = [
         result.name,
         result.shirtNumber,
         result.position,
@@ -265,7 +258,7 @@ function playerInfo(id) {
       ];
 
       rowData.forEach((data) => {
-        let cell = document.createElement("td");
+        const cell = document.createElement("td");
         cell.textContent = data;
         row.appendChild(cell);
       });
@@ -273,8 +266,8 @@ function playerInfo(id) {
     });
 }
 function drawTable(table) {
-  let rowHead = document.createElement("tr");
-  let thData = [
+  const rowHead = document.createElement("tr");
+  const thData = [
     "Position",
     "Namn",
     "Matcher",
@@ -286,7 +279,7 @@ function drawTable(table) {
   ];
 
   thData.forEach((data) => {
-    let cell = document.createElement("th");
+    const cell = document.createElement("th");
     cell.textContent = data;
     rowHead.appendChild(cell);
   });
@@ -295,8 +288,8 @@ function drawTable(table) {
 
   table.forEach((object) => {
     // skapar en tabell över ligan med lite statistik.
-    let row = document.createElement("tr");
-    let rowData = [
+    const row = document.createElement("tr");
+    const rowData = [
       object.position,
       object.team.name,
       object.playedGames,
@@ -321,12 +314,11 @@ function drawTable(table) {
         teamName.won = object.won;
         teamName.draw = object.draw;
         teamName.lost = object.lost;
-
         row.appendChild(teamName);
       }
       // på resterande index lägger jag in endast datan.
       else {
-        let cell = document.createElement("td");
+        const cell = document.createElement("td");
         cell.textContent = data;
         row.appendChild(cell);
       }
@@ -380,7 +372,6 @@ function drawChart(chartTitle, labels, data) {
   });
 }
 function drawChartCircle(chartTitle, labels, data) {
-  // canvasContext.style.width = "40vw";
   chartCircle = new Chart(canvasContext, {
     type: "doughnut",
     data: {
@@ -408,9 +399,9 @@ function drawChartCircle(chartTitle, labels, data) {
     },
   });
 }
-// Nedan funktion ritar upp en titel.
+// Nedan funktion ritar upp titlar.
 function setTitle(name) {
-  let title = document.createElement("h2");
+  const title = document.createElement("h2");
   title.innerHTML = name;
   title.style.textAlign = "center";
   figureArticle.appendChild(title);
@@ -447,22 +438,22 @@ showMatches.addEventListener("click", () => {
   emptyTableAndChart();
   setTitle(`Matchdag: ${matchesArray[0].matchday}`);
 
-  let rowHead = document.createElement("tr");
-  let thData = ["Hemmalag", "Datum", "Bortalag"];
+  const rowHead = document.createElement("tr");
+  const thData = ["Hemmalag", "Datum", "Bortalag"];
 
   thData.forEach((data) => {
-    let cell = document.createElement("th");
+    const cell = document.createElement("th");
     cell.textContent = data;
     rowHead.appendChild(cell);
   });
   thead.appendChild(rowHead);
 
   matchesArray.forEach((match) => {
-    let row = document.createElement("tr");
-    let rowData = [match.homeTeam, match.date, match.awayTeam];
+    const row = document.createElement("tr");
+    const rowData = [match.homeTeam, match.date, match.awayTeam];
 
     rowData.forEach((data) => {
-      let cell = document.createElement("td");
+      const cell = document.createElement("td");
       cell.textContent = data;
       row.appendChild(cell);
     });
