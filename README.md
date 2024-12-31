@@ -1,0 +1,1 @@
+Creating a fotball site where you can look for tables on the biggest leagues of Europe, select youre favorite club and more. NOTE. you need to install the extension CORS Everywhere for this site to work on youre browser. 
