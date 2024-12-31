@@ -1,3 +1,12 @@
+function onClick(event) {
+  console.log(event);
+  console.log(event.pressure); // true eller false
+}
+
+document.querySelector("#p").addEventListener("click", onClick);
+
+const article = document.querySelector("#article");
+
 let cities = document.querySelector("#showCities");
 cities.classList.add("options");
 
@@ -17,12 +26,10 @@ function drawCities(cities) {
   }
   cities.forEach((city) => {
     citiesParagraph = document.createElement("p");
-    citiesParagraph.innerHTML += `${city.name}. Befolkning: ${city.population} id: ${city.id}`;
+    citiesParagraph.textContent += `${city.name}. Befolkning: ${city.population} id: ${city.id}`;
     article.appendChild(citiesParagraph);
   });
 }
-
-const article = document.querySelector("#article");
 
 const addCity = document.querySelector("#addCity");
 addCity.classList.add("options");

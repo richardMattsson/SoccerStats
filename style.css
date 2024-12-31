@@ -54,6 +54,9 @@ footer {
   font-size: 20px;
   font-family: sans-serif;
 }
+.linksToCORS {
+  color: aliceblue;
+}
 #imgLeagueLogo {
   background-color: aliceblue;
   border-radius: 5%;

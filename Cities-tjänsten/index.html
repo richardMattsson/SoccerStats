@@ -11,7 +11,7 @@
       <h1>Cities-tjänsten</h1>
     </header>
     <nav id="navigation">
-      <p>
+      <p id="p">
         Börja med att visa städer för att se aktuell lista.<br />
         Lägg till, redigera eller ta bort stad. <br />
         Visa listan på nytt för uppdaterad lista.
@@ -32,7 +32,7 @@
               type="number"
               inputmode="numeric"
               placeholder="Skriv befolkningsmängd"
-            /><button id="addBtn">Skicka</button><br />
+            /><button id="addBtn" type="submit">Skicka</button><br />
           </form>
         </li>
 
@@ -46,7 +46,7 @@
               type="number"
               inputmode="numeric"
               placeholder="Ändra befolkningsmängd"
-            /><button id="editBtn">Skicka</button><br />
+            /><button id="editBtn" type="submit">Skicka</button><br />
           </form>
         </li>
 
@@ -54,7 +54,7 @@
           <button class="options">Ta bort stad</button>
           <form id="deleteForm">
             <input id="idDelete" type="text" placeholder="Välj ett Id" />
-            <button id="deleteBtn">Skicka</button>
+            <button id="deleteBtn" type="submit">Skicka</button>
           </form>
         </li>
       </ul>

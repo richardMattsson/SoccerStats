@@ -2,13 +2,13 @@ const apiKey = "d5d8a211dbbd4ef5849cc74165a5be01";
 
 let urlTeams = `https://api.football-data.org/v4/teams`;
 
-let urlFromLocalStorage =
-  urlTeams + `/${localStorage.getItem("favouriteTeamId")};`;
-console.log(urlFromLocalStorage);
+teamIdFromLocalStorage = localStorage.getItem("favouriteTeamId");
+
+let favouriteTeamUrl = urlTeams + `/${teamIdFromLocalStorage};`;
 
 const asideElement = document.querySelector("#aside");
 
-setFavTeam(urlFromLocalStorage);
+setFavTeam(favouriteTeamUrl);
 
 function setFavTeam(url) {
   fetch(url, {

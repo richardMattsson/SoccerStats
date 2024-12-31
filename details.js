@@ -315,6 +315,11 @@ function drawTable(table) {
         teamName.draw = object.draw;
         teamName.lost = object.lost;
         row.appendChild(teamName);
+
+        // teamLink = document.createElement("a");
+        // teamLink.setAttribute("href", "teams.html");
+        // teamLink.appendChild(teamName);
+        // row.appendChild(teamLink);
       }
       // på resterande index lägger jag in endast datan.
       else {
